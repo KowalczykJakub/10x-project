@@ -1,0 +1,18 @@
+---
+import "../styles/global.css";
+import StudySession from "../components/StudySession";
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Sesja nauki | 10x-Cards</title>
+  </head>
+  <body class="min-h-screen bg-background">
+    <StudySession client:load />
+  </body>
+</html>

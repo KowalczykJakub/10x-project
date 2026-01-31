@@ -1,8 +1,57 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="10x-Cards - Fiszki z AI">
+  <div class="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-background to-muted">
+    <div class="max-w-2xl mx-auto text-center space-y-8">
+      <!-- Logo/Title -->
+      <div class="space-y-4">
+        <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          10x-Cards
+        </h1>
+        <p class="text-xl md:text-2xl text-muted-foreground">
+          Generuj fiszki do nauki z pomocą AI
+        </p>
+      </div>
+
+      <!-- Features -->
+      <div class="grid md:grid-cols-3 gap-6 py-8">
+        <div class="p-6 bg-card rounded-lg border">
+          <div class="text-4xl mb-2">🎯</div>
+          <h3 class="font-semibold mb-2">Generuj AI</h3>
+          <p class="text-sm text-muted-foreground">
+            Wklej tekst, a AI stworzy fiszki
+          </p>
+        </div>
+        <div class="p-6 bg-card rounded-lg border">
+          <div class="text-4xl mb-2">📚</div>
+          <h3 class="font-semibold mb-2">Zarządzaj</h3>
+          <p class="text-sm text-muted-foreground">
+            Edytuj i organizuj swoje fiszki
+          </p>
+        </div>
+        <div class="p-6 bg-card rounded-lg border">
+          <div class="text-4xl mb-2">🎓</div>
+          <h3 class="font-semibold mb-2">Ucz się</h3>
+          <p class="text-sm text-muted-foreground">
+            Sesje nauki z algorytmem powtórek
+          </p>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="space-y-4">
+        <a 
+          href="/generate" 
+          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 text-lg"
+        >
+          Rozpocznij teraz →
+        </a>
+        <p class="text-sm text-muted-foreground">
+          Bez rejestracji • Bez logowania • Od razu do działania
+        </p>
+      </div>
+    </div>
+  </div>
 </Layout>

@@ -1,0 +1,36 @@
+### Test Generation API Endpoint
+### Użyj w VS Code z rozszerzeniem REST Client
+
+@baseUrl = http://localhost:4321
+
+### 1. Poprawny request - wygeneruj fiszki z tekstu o TypeScript
+POST {{baseUrl}}/api/generations
+Content-Type: application/json
+
+{
+  "source_text": "TypeScript is a strongly typed programming language that builds on JavaScript, giving you better tooling at any scale. TypeScript adds additional syntax to JavaScript to support a tighter integration with your editor. Catch errors early in your editor. TypeScript code converts to JavaScript, which runs anywhere JavaScript runs: In a browser, on Node.js or Deno and in your apps. TypeScript understands JavaScript and uses type inference to give you great tooling without additional code. TypeScript is a syntactic superset of JavaScript which adds static typing. This basically means that TypeScript adds syntax on top of JavaScript, allowing developers to add types. TypeScript being a superset of JavaScript means that it contains all of the functionality of JavaScript, and then some. The key difference is TypeScript uses static typing, whereas JavaScript is dynamically typed. Static typing means you declare the type of a variable when you create it, and that variable can only ever hold that type of value. Dynamic typing means you do not declare types, and variables can change types. TypeScripts type system allows you to build more robust code by catching type errors at compile time rather than runtime. This leads to fewer bugs and easier maintenance of large codebases. The TypeScript compiler can also provide better autocomplete suggestions and documentation in supported editors, making development faster and more enjoyable."
+}
+
+### 2. Błąd - za krótki tekst (mniej niż 1000 znaków)
+POST {{baseUrl}}/api/generations
+Content-Type: application/json
+
+{
+  "source_text": "To jest za krótki tekst. Powinien zwrócić błąd walidacji."
+}
+
+### 3. Błąd - brakujące pole source_text
+POST {{baseUrl}}/api/generations
+Content-Type: application/json
+
+{
+  "wrong_field": "test"
+}
+
+### 4. Błąd - pusty string
+POST {{baseUrl}}/api/generations
+Content-Type: application/json
+
+{
+  "source_text": ""
+}
