@@ -145,9 +145,15 @@ npm run test:e2e
 ### "Migration errors"
 → Uruchom migracje ręcznie: `npx supabase db push`
 
+### "Too many requests" / Rate limiting w testach
+→ Zobacz: `.github/FIX-RATE-LIMITING.md`
+→ Upewnij się że email confirmation jest wyłączone w Supabase
+→ Testy API używają współdzielonego użytkownika w CI
+
 ### Testy przechodzą lokalnie, ale nie w CI
 → Sprawdź czy wszystkie sekrety są dodane w GitHub
 → Sprawdź logi każdego step w Actions
+→ Sprawdź czy email confirmation jest wyłączone
 
 ---
 

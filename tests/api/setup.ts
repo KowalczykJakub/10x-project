@@ -11,11 +11,23 @@ export interface TestUser {
   cookies?: string;
 }
 
+// Shared test user to avoid rate limiting in production
+const SHARED_TEST_USER = {
+  email: `ci-test-user@example.com`,
+  password: "Test123!@#SecurePassword",
+};
+
 /**
  * Create a new test user with registration
+ * In CI, reuses a single user to avoid rate limiting
  */
 export async function setupTestUser(): Promise<TestUser> {
-  // Add random string to ensure unique email even with same timestamp
+  // In CI environment, use shared test user to avoid rate limiting
+  if (process.env.CI === "true") {
+    return { ...SHARED_TEST_USER };
+  }
+
+  // Local development: create unique user per test
   const email = `test-${Date.now()}-${Math.random().toString(36).substring(7)}@example.com`;
   const password = "Test123!@";
 
