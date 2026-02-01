@@ -1,181 +1,153 @@
-# GitHub Actions CI/CD Configuration
+# GitHub Actions Workflows
 
-This directory contains GitHub Actions workflows for automated testing, building, and deployment of the 10x-project.
+## 📋 Dostępne Workflows
 
-## Workflows
+### 1. CI (`ci.yml`)
+Główny workflow CI/CD uruchamiany przy każdym pushu i pull requeście.
 
-### CI Pipeline (`ci.yml`)
+**Zadania:**
+- ✅ Linting kodu
+- ✅ Testy jednostkowe
+- ✅ Testy API
+- ✅ Testy E2E
+- ✅ Build aplikacji
 
-The main CI pipeline runs on every push to `master` and on all pull requests. It consists of the following jobs:
+**Kiedy się uruchamia:**
+- Push do branch `master`
+- Pull request do branch `master`
 
-#### 1. Lint
-- Runs ESLint to check code quality
-- Uses Node.js version from `.nvmrc` (22.14.0)
-- Fails the build if linting errors are found
+---
 
-#### 2. Unit Tests
-- Runs Vitest unit tests
-- Generates code coverage reports
-- Uploads coverage to Codecov (optional, requires setup)
-- Uses the configuration from `vitest.config.ts`
+### 2. Database Migrations (`db-migrations.yml`)
+Workflow do zarządzania migracjami bazy danych na produkcji.
 
-#### 3. API Tests
-- Runs API integration tests using Vitest
-- Requires Supabase and OpenRouter credentials
-- Uses the configuration from `vitest.api.config.ts`
+**Zadania:**
+- 🔗 Linkuje projekt lokalny z Supabase
+- 📊 Sprawdza status migracji
+- 🚀 Uruchamia migracje na produkcyjnej bazie
+- ✅ Weryfikuje poprawność migracji
 
-#### 4. E2E Tests
-- Runs end-to-end tests using Playwright
-- Tests against Chromium browser
-- Automatically starts dev server before tests
-- Uploads test reports and screenshots on failure
-- Artifacts are retained for 30 days
+**Kiedy się uruchamia:**
+- **Ręcznie**: Przejdź do Actions → Database Migrations → Run workflow
+- **Automatycznie**: Po push do `master` gdy zmienią się pliki w `supabase/migrations/`
 
-#### 5. Build
-- Builds the Astro application
-- Runs only after lint and tests pass
-- Uploads build artifacts (retained for 7 days)
-- Can be used for deployment
-
-## Required Secrets
-
-To run the workflows successfully, configure the following secrets in your GitHub repository settings (`Settings > Secrets and variables > Actions`):
-
-### Supabase Configuration
-- `SUPABASE_URL` - Your Supabase project URL
-- `SUPABASE_ANON_KEY` - Supabase anonymous/public key
-- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (for API tests)
-
-### External APIs
-- `OPENROUTER_API_KEY` - OpenRouter API key for AI features
-
-## Setting Up Secrets
-
-1. Go to your repository on GitHub
-2. Navigate to `Settings > Secrets and variables > Actions`
-3. Click `New repository secret`
-4. Add each secret with the exact name shown above
-5. Save each secret
-
-## Artifacts
-
-The workflows produce several artifacts that can be downloaded from the Actions tab:
-
-- **playwright-report**: HTML report of E2E test results (30 days retention)
-- **test-results**: Raw Playwright test results and screenshots (30 days retention)
-- **dist**: Production build of the application (7 days retention)
-
-## Caching
-
-The workflows use caching to speed up builds:
-
-- **npm cache**: Caches `node_modules` based on `package-lock.json`
-- **Playwright browsers**: Caches browser binaries to avoid re-downloading
-
-## Node.js Version
-
-The workflows automatically use the Node.js version specified in `.nvmrc` file (currently 22.14.0). Update the `.nvmrc` file to change the Node.js version across all workflows.
-
-## Local Testing
-
-To run the same checks locally before pushing:
-
-```bash
-# Linting
-npm run lint
-
-# Unit tests
-npm run test:unit
-
-# API tests (requires environment variables)
-npm run test:api
-
-# E2E tests
-npm run test:e2e
-
-# Build
-npm run build
+**Wymagane GitHub Secrets:**
+```
+SUPABASE_ACCESS_TOKEN      # Token z https://supabase.com/dashboard/account/tokens
+SUPABASE_DB_PASSWORD       # Hasło do bazy (3m!fvFhB!!f3GW6)
+SUPABASE_PROJECT_ID        # ID projektu (weccqjwtlzelsmawkmnb)
 ```
 
-## Codecov Integration (Optional)
+---
 
-The unit test job includes Codecov integration for coverage reporting. To enable:
+## 🔐 Konfiguracja GitHub Secrets
 
-1. Sign up at [codecov.io](https://codecov.io)
-2. Connect your GitHub repository
-3. The workflow will automatically upload coverage reports
-4. Set `fail_ci_if_error: true` if you want to enforce coverage requirements
+Aby workflows działały poprawnie, musisz dodać następujące sekrety w swoim repozytorium:
 
-## Troubleshooting
+**Przejdź do:** Settings → Secrets and variables → Actions → New repository secret
 
-### Tests Failing in CI but Passing Locally
+### Wymagane sekrety:
 
-- Check that all required secrets are configured
-- Ensure the Node.js version matches (check `.nvmrc`)
-- Review the full logs in the Actions tab
+| Secret Name | Wartość | Opis |
+|-------------|---------|------|
+| `SUPABASE_URL` | `https://weccqjwtlzelsmawkmnb.supabase.co` | URL projektu Supabase |
+| `SUPABASE_ANON_KEY` | `eyJ...` | Publiczny klucz API (anon key) |
+| `SUPABASE_SERVICE_ROLE_KEY` | `eyJ...` | Klucz z pełnymi uprawnieniami |
+| `SUPABASE_ACCESS_TOKEN` | `sbp_...` | Token CLI do zarządzania projektem |
+| `SUPABASE_DB_PASSWORD` | `3m!fvFhB!!f3GW6` | Hasło do bazy PostgreSQL |
+| `SUPABASE_PROJECT_ID` | `weccqjwtlzelsmawkmnb` | Reference ID projektu |
+| `OPENROUTER_API_KEY` | `sk-or-v1-...` | Klucz API do OpenRouter (opcjonalny dla testów) |
 
-### E2E Tests Timing Out
+---
 
-- E2E tests have a 30-second timeout per test
-- Check the Playwright report artifact for details
-- Screenshots are captured on failure
+## 🚀 Jak używać
 
-### Build Artifacts Not Available
+### Uruchomienie migracji ręcznie
 
-- Artifacts are only created when the job completes
-- Check retention periods (7-30 days)
-- Failed jobs may not produce artifacts
+1. Przejdź do zakładki **Actions** w swoim repozytorium GitHub
+2. Wybierz workflow **"Database Migrations"**
+3. Kliknij **"Run workflow"**
+4. Wybierz branch (domyślnie: `master`)
+5. Kliknij **"Run workflow"** (zielony przycisk)
 
-## Extending the Workflow
+GitHub uruchomi migracje i pokąże Ci logi w czasie rzeczywistym.
 
-### Adding a New Job
+### Sprawdzanie wyników
 
-Add a new job to `.github/workflows/ci.yml`:
+Po zakończeniu workflow:
+- ✅ **Zielony checkmark** = Migracje zastosowane pomyślnie
+- ❌ **Czerwony X** = Błąd podczas migracji (kliknij żeby zobaczyć logi)
 
-```yaml
-my-new-job:
-  name: My New Job
-  runs-on: ubuntu-latest
-  needs: [lint]  # Optional: depend on other jobs
-  
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v6
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v6
-      with:
-        node-version-file: '.nvmrc'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Run my script
-      run: npm run my-script
+---
+
+## 📝 Dodawanie nowych migracji
+
+1. Stwórz nową migrację lokalnie:
+   ```bash
+   npx supabase migration new add_new_feature
+   ```
+
+2. Edytuj plik w `supabase/migrations/`
+
+3. Commituj i pushuj:
+   ```bash
+   git add supabase/migrations/
+   git commit -m "Add migration: add_new_feature"
+   git push origin master
+   ```
+
+4. Workflow automatycznie uruchomi migrację na produkcji (jeśli włączyłeś auto-trigger)
+   
+   **LUB** uruchom ręcznie przez GitHub Actions UI
+
+---
+
+## 🔍 Monitorowanie
+
+### Sprawdzanie logów workflow
+
+1. Przejdź do **Actions**
+2. Kliknij na konkretny workflow run
+3. Kliknij na job **"Run Database Migrations"**
+4. Rozwiń każdy step żeby zobaczyć szczegółowe logi
+
+### Sprawdzanie statusu migracji w Supabase
+
+Przejdź do SQL Editor w dashboardzie:
+https://supabase.com/dashboard/project/weccqjwtlzelsmawkmnb/editor
+
+I uruchom:
+```sql
+SELECT * FROM supabase_migrations.schema_migrations ORDER BY version DESC;
 ```
 
-### Adding Environment Variables
+Zobaczysz listę wszystkich zastosowanych migracji.
 
-Add to the `env` section of the relevant job:
+---
 
-```yaml
-env:
-  MY_VAR: ${{ secrets.MY_VAR }}
-  NODE_ENV: production
-```
+## 🆘 Troubleshooting
 
-### Creating a New Workflow
+### "Invalid access token"
+- Wygeneruj nowy token: https://supabase.com/dashboard/account/tokens
+- Zaktualizuj secret `SUPABASE_ACCESS_TOKEN` w GitHub
 
-Create a new `.yml` file in `.github/workflows/` directory with the workflow definition.
+### "Cannot connect to database"
+- Sprawdź czy `SUPABASE_DB_PASSWORD` jest poprawne
+- Sprawdź Network Restrictions w Supabase Dashboard
 
-## Actions Used
+### "Migration already applied"
+- To normalne! Znaczy że migracja już działa na produkcji
+- Workflow powinien zakończyć się sukcesem (status: ✅)
 
-This workflow uses the following verified GitHub Actions:
+### Workflow się nie uruchamia
+- Sprawdź czy wszystkie wymagane sekrety są dodane
+- Sprawdź czy masz uprawnienia do uruchamiania Actions w repo
+- Sprawdź zakładkę Actions czy workflows nie są wyłączone
 
-- [`actions/checkout@v6`](https://github.com/actions/checkout) - Check out repository code
-- [`actions/setup-node@v6`](https://github.com/actions/setup-node) - Set up Node.js environment
-- [`actions/upload-artifact@v6`](https://github.com/actions/upload-artifact) - Upload build artifacts
-- [`codecov/codecov-action@v5`](https://github.com/codecov/codecov-action) - Upload coverage reports
+---
 
-All actions are pinned to major versions and are regularly updated.
+## 📚 Przydatne linki
+
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Supabase CLI Documentation](https://supabase.com/docs/guides/cli)
+- [Supabase Migrations Guide](https://supabase.com/docs/guides/cli/local-development#database-migrations)

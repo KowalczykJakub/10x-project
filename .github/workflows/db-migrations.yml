@@ -1,0 +1,67 @@
+name: Database Migrations
+
+# Uruchamia migracje na produkcyjnej bazie Supabase
+# Możesz uruchomić ręcznie przez GitHub Actions UI lub automatycznie po merge do master
+
+on:
+  # Ręczne uruchomienie z GitHub Actions UI
+  workflow_dispatch:
+  
+  # Automatyczne uruchomienie po push do master (opcjonalne - zakomentuj jeśli nie chcesz)
+  push:
+    branches: [master]
+    paths:
+      - 'supabase/migrations/**'
+
+jobs:
+  migrate:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    
+    # Używamy zmiennych środowiskowych z GitHub Secrets
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      
+      - name: Verify Supabase CLI installation
+        run: supabase --version
+      
+      - name: Link to Supabase project
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --password ${{ secrets.SUPABASE_DB_PASSWORD }}
+      
+      - name: Check migration status
+        run: |
+          echo "📊 Sprawdzam status migracji..."
+          supabase db remote status
+      
+      - name: Run migrations
+        run: |
+          echo "🚀 Uruchamiam migracje na produkcji..."
+          supabase db push
+      
+      - name: Verify migrations
+        run: |
+          echo "✅ Weryfikuję zastosowane migracje..."
+          supabase db remote status
+      
+      - name: Migration summary
+        if: always()
+        run: |
+          echo "================================================"
+          echo "📝 Podsumowanie Migracji"
+          echo "================================================"
+          echo "Projekt: ${{ secrets.SUPABASE_PROJECT_ID }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "================================================"
