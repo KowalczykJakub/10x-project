@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import TextInput from './TextInput';
-import ProposalsList from './ProposalsList';
-import type { FlashcardProposalDTO, CreateGenerationResponseDTO } from '@/types';
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import TextInput from "./TextInput";
+import ProposalsList from "./ProposalsList";
+import type { FlashcardProposalDTO, CreateGenerationResponseDTO } from "@/types";
 
 export default function GenerateView() {
-  const [sourceText, setSourceText] = useState('');
+  const [sourceText, setSourceText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generationId, setGenerationId] = useState<number | null>(null);
@@ -26,10 +26,10 @@ export default function GenerateView() {
     setSuccessMessage(null);
 
     try {
-      const response = await fetch('/api/generations', {
-        method: 'POST',
+      const response = await fetch("/api/generations", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           source_text: sourceText,
@@ -38,18 +38,18 @@ export default function GenerateView() {
 
       if (!response.ok) {
         const data = await response.json();
-        
+
         if (response.status === 429) {
-          throw new Error('Przekroczony limit 10 generowań na godzinę. Spróbuj ponownie później.');
+          throw new Error("Przekroczony limit 10 generowań na godzinę. Spróbuj ponownie później.");
         }
-        
-        throw new Error(data.message || 'Nie udało się wygenerować fiszek');
+
+        throw new Error(data.message || "Nie udało się wygenerować fiszek");
       }
 
       const data: CreateGenerationResponseDTO = await response.json();
 
       if (!data.proposals || data.proposals.length === 0) {
-        setError('AI nie wygenerowało żadnych fiszek. Spróbuj z innym tekstem.');
+        setError("AI nie wygenerowało żadnych fiszek. Spróbuj z innym tekstem.");
         return;
       }
 
@@ -59,7 +59,7 @@ export default function GenerateView() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('Wystąpił nieoczekiwany błąd. Spróbuj ponownie.');
+        setError("Wystąpił nieoczekiwany błąd. Spróbuj ponownie.");
       }
     } finally {
       setIsGenerating(false);
@@ -68,10 +68,10 @@ export default function GenerateView() {
 
   const handleSaveComplete = () => {
     setSuccessMessage(`Pomyślnie zapisano ${proposals.length} fiszek!`);
-    setSourceText('');
+    setSourceText("");
     setProposals([]);
     setGenerationId(null);
-    
+
     // Auto-hide success message after 5 seconds
     setTimeout(() => setSuccessMessage(null), 5000);
   };
@@ -80,10 +80,7 @@ export default function GenerateView() {
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Success Message */}
       {successMessage && (
-        <div
-          className="p-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-md"
-          role="alert"
-        >
+        <div className="p-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-md" role="alert">
           {successMessage}
         </div>
       )}
@@ -93,16 +90,12 @@ export default function GenerateView() {
         <CardHeader>
           <CardTitle>Wygeneruj fiszki z AI</CardTitle>
           <CardDescription>
-            Wklej tekst (notatki, artykuł, materiał edukacyjny), a AI automatycznie
-            wygeneruje propozycje fiszek do nauki.
+            Wklej tekst (notatki, artykuł, materiał edukacyjny), a AI automatycznie wygeneruje propozycje fiszek do
+            nauki.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <TextInput
-            value={sourceText}
-            onChange={setSourceText}
-            disabled={isGenerating}
-          />
+          <TextInput value={sourceText} onChange={setSourceText} disabled={isGenerating} />
 
           {error && (
             <div
@@ -114,12 +107,8 @@ export default function GenerateView() {
           )}
 
           <div className="flex justify-end">
-            <Button
-              onClick={handleGenerate}
-              disabled={!isValidLength || isGenerating}
-              size="lg"
-            >
-              {isGenerating ? 'Generuję fiszki...' : 'Generuj fiszki'}
+            <Button onClick={handleGenerate} disabled={!isValidLength || isGenerating} size="lg">
+              {isGenerating ? "Generuję fiszki..." : "Generuj fiszki"}
             </Button>
           </div>
         </CardContent>
@@ -134,9 +123,7 @@ export default function GenerateView() {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
               </div>
               <p className="text-lg font-medium">Generuję fiszki...</p>
-              <p className="text-sm text-muted-foreground">
-                To może potrwać 3-5 sekund
-              </p>
+              <p className="text-sm text-muted-foreground">To może potrwać 3-5 sekund</p>
             </CardContent>
           </Card>
         </div>
@@ -144,11 +131,7 @@ export default function GenerateView() {
 
       {/* Proposals Section */}
       {proposals.length > 0 && generationId && (
-        <ProposalsList
-          proposals={proposals}
-          generationId={generationId}
-          onSaveComplete={handleSaveComplete}
-        />
+        <ProposalsList proposals={proposals} generationId={generationId} onSaveComplete={handleSaveComplete} />
       )}
     </div>
   );

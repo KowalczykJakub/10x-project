@@ -1,12 +1,6 @@
-import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import type { FlashcardSortField, SortOrder, FlashcardSource } from '@/types';
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { FlashcardSortField, SortOrder, FlashcardSource } from "@/types";
 
 interface FlashcardFiltersProps {
   sortField: FlashcardSortField;
@@ -27,20 +21,20 @@ export default function FlashcardFilters({
 }: FlashcardFiltersProps) {
   const handleSortChange = (value: string) => {
     switch (value) {
-      case 'newest':
-        onSortChange('created_at', 'desc');
+      case "newest":
+        onSortChange("created_at", "desc");
         break;
-      case 'oldest':
-        onSortChange('created_at', 'asc');
+      case "oldest":
+        onSortChange("created_at", "asc");
         break;
-      case 'alphabetical':
-        onSortChange('front', 'asc');
+      case "alphabetical":
+        onSortChange("front", "asc");
         break;
     }
   };
 
   const handleSourceChange = (value: string) => {
-    if (value === 'all') {
+    if (value === "all") {
       onSourceFilterChange(undefined);
     } else {
       onSourceFilterChange(value as FlashcardSource);
@@ -48,10 +42,10 @@ export default function FlashcardFilters({
   };
 
   const getSortValue = (): string => {
-    if (sortField === 'front') return 'alphabetical';
-    if (sortField === 'created_at' && sortOrder === 'desc') return 'newest';
-    if (sortField === 'created_at' && sortOrder === 'asc') return 'oldest';
-    return 'newest';
+    if (sortField === "front") return "alphabetical";
+    if (sortField === "created_at" && sortOrder === "desc") return "newest";
+    if (sortField === "created_at" && sortOrder === "asc") return "oldest";
+    return "newest";
   };
 
   return (
@@ -79,10 +73,7 @@ export default function FlashcardFilters({
           <label htmlFor="source-select" className="text-sm font-medium">
             Źródło:
           </label>
-          <Select
-            value={sourceFilter || 'all'}
-            onValueChange={handleSourceChange}
-          >
+          <Select value={sourceFilter || "all"} onValueChange={handleSourceChange}>
             <SelectTrigger id="source-select" className="w-[180px]">
               <SelectValue />
             </SelectTrigger>
@@ -97,9 +88,7 @@ export default function FlashcardFilters({
       </div>
 
       {/* New Flashcard Button */}
-      <Button onClick={onNewFlashcard}>
-        + Nowa fiszka
-      </Button>
+      <Button onClick={onNewFlashcard}>+ Nowa fiszka</Button>
     </div>
   );
 }

@@ -1,23 +1,18 @@
-import type { APIRoute } from 'astro';
-import { CreateGenerationSchema } from '@/lib/schemas/generation.schema';
-import { GenerationService } from '@/lib/services/generation.service';
-import { OpenRouterErrorFactory } from '@/lib/errors/openrouter.errors';
-import type { 
-  CreateGenerationResponseDTO, 
-  GenerationListResponseDTO,
-  GenerationDTO,
-  ErrorResponseDTO 
-} from '@/types';
+import type { APIRoute } from "astro";
+import { CreateGenerationSchema } from "@/lib/schemas/generation.schema";
+import { GenerationService } from "@/lib/services/generation.service";
+import { OpenRouterErrorFactory } from "@/lib/errors/openrouter.errors";
+import type { CreateGenerationResponseDTO, GenerationListResponseDTO, GenerationDTO, ErrorResponseDTO } from "@/types";
 
 export const prerender = false;
 
 // Mock generations store (in-memory for development)
-let mockGenerations: GenerationDTO[] = [];
+const mockGenerations: GenerationDTO[] = [];
 
 /**
  * GET /api/generations
  * List generation history with statistics
- * 
+ *
  * MOCK VERSION: Returns stored generations
  * TODO: Replace with database queries when authentication is implemented
  */
@@ -27,22 +22,22 @@ export const GET: APIRoute = async ({ url, locals }) => {
   // Check authentication
   if (!user) {
     const errorResponse: ErrorResponseDTO = {
-      error: 'Unauthorized',
-      message: 'Musisz być zalogowany',
+      error: "Unauthorized",
+      message: "Musisz być zalogowany",
     };
     return new Response(JSON.stringify(errorResponse), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
   const searchParams = url.searchParams;
-  
+
   // Parse query parameters
-  const page = parseInt(searchParams.get('page') || '1');
-  const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100);
-  const sort = searchParams.get('sort') || 'created_at';
-  const order = searchParams.get('order') || 'desc';
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
+  const sort = searchParams.get("sort") || "created_at";
+  const order = searchParams.get("order") || "desc";
 
   try {
     // TODO: Filter by user.id when database is integrated
@@ -55,7 +50,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
       const aVal = new Date(a[sort as keyof GenerationDTO] as string).getTime();
       const bVal = new Date(b[sort as keyof GenerationDTO] as string).getTime();
 
-      if (order === 'asc') {
+      if (order === "asc") {
         return aVal > bVal ? 1 : -1;
       } else {
         return aVal < bVal ? 1 : -1;
@@ -71,7 +66,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
     // Calculate statistics
     const totalGenerated = mockGenerations.reduce((sum, g) => sum + g.generated_count, 0);
     const totalAccepted = mockGenerations.reduce(
-      (sum, g) => sum + g.accepted_unedited_count + g.accepted_edited_count, 
+      (sum, g) => sum + g.accepted_unedited_count + g.accepted_edited_count,
       0
     );
     const acceptanceRate = totalGenerated > 0 ? totalAccepted / totalGenerated : 0;
@@ -92,28 +87,26 @@ export const GET: APIRoute = async ({ url, locals }) => {
       },
     };
 
-    return new Response(
-      JSON.stringify(response),
-      {
-        status: 200,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        }
-      }
-    );
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
   } catch (error) {
-    console.error('List generations error:', error);
-    
+    // eslint-disable-next-line no-console
+    console.error("List generations error:", error);
+
     return new Response(
       JSON.stringify({
-        error: 'Internal Server Error',
-        message: 'Failed to retrieve generations',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: "Internal Server Error",
+        message: "Failed to retrieve generations",
+        details: error instanceof Error ? error.message : "Unknown error",
       } as ErrorResponseDTO),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -122,7 +115,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
 /**
  * POST /api/generations
  * Generate flashcard proposals from source text
- * 
+ *
  * Real implementation with OpenRouter API integration
  */
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -131,12 +124,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // Check authentication
   if (!user) {
     const errorResponse: ErrorResponseDTO = {
-      error: 'Unauthorized',
-      message: 'Musisz być zalogowany',
+      error: "Unauthorized",
+      message: "Musisz być zalogowany",
     };
     return new Response(JSON.stringify(errorResponse), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
@@ -147,12 +140,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
   } catch {
     return new Response(
       JSON.stringify({
-        error: 'Bad Request',
-        message: 'Invalid JSON in request body'
+        error: "Bad Request",
+        message: "Invalid JSON in request body",
       } as ErrorResponseDTO),
-      { 
-        status: 400, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -163,21 +156,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const firstError = validation.error.errors[0];
     return new Response(
       JSON.stringify({
-        error: 'Validation Error',
+        error: "Validation Error",
         message: firstError.message,
         details: {
           current_length: body.source_text?.length || 0,
           min_length: 1000,
           max_length: 10000,
-          errors: validation.error.errors.map(e => ({
-            field: e.path.join('.'),
-            message: e.message
-          }))
-        }
+          errors: validation.error.errors.map((e) => ({
+            field: e.path.join("."),
+            message: e.message,
+          })),
+        },
       } as ErrorResponseDTO),
-      { 
-        status: 400, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -185,15 +178,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // Get OpenRouter API key from environment
   const apiKey = import.meta.env.OPENROUTER_API_KEY;
   if (!apiKey) {
-    console.error('OPENROUTER_API_KEY environment variable is not set');
+    // eslint-disable-next-line no-console
+    console.error("OPENROUTER_API_KEY environment variable is not set");
     return new Response(
       JSON.stringify({
-        error: 'Server Configuration Error',
-        message: 'API service is not properly configured'
+        error: "Server Configuration Error",
+        message: "API service is not properly configured",
       } as ErrorResponseDTO),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -202,7 +196,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const userId = locals.userId; // Assume middleware sets this (optional for now)
 
   // Get model from request or use default
-  const model = body.model || 'anthropic/claude-3.5-sonnet';
+  const model = body.model || "anthropic/claude-3.5-sonnet";
 
   // Generate flashcards
   try {
@@ -213,75 +207,69 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
 
     // Generate flashcards
-    const result = await generationService.generateFlashcards(
-      validation.data.source_text,
-      userId,
-      model
-    );
+    const result = await generationService.generateFlashcards(validation.data.source_text, userId, model);
 
     // Store generation in mock store (for development without database)
     if (!locals.supabase) {
       mockGenerations.push(result.generation);
     }
 
-    return new Response(
-      JSON.stringify(result as CreateGenerationResponseDTO),
-      {
-        status: 201,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*', // CORS for development
-        }
-      }
-    );
+    return new Response(JSON.stringify(result as CreateGenerationResponseDTO), {
+      status: 201,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*", // CORS for development
+      },
+    });
   } catch (error) {
-    console.error('Generation error:', error);
-    
+    // eslint-disable-next-line no-console
+    console.error("Generation error:", error);
+
     // Handle OpenRouter errors specifically
     if (OpenRouterErrorFactory.isOpenRouterError(error)) {
       const openRouterError = error;
-      
+
       // Map error codes to HTTP status codes
       const statusMap: Record<string, number> = {
-        'VALIDATION_ERROR': 400,
-        'OPENROUTER_BAD_REQUEST': 400,
-        'OPENROUTER_UNAUTHORIZED': 401,
-        'OPENROUTER_FORBIDDEN': 403,
-        'OPENROUTER_NOT_FOUND': 404,
-        'OPENROUTER_RATE_LIMIT': 429,
-        'OPENROUTER_SERVER_ERROR': 500,
-        'OPENROUTER_BAD_GATEWAY': 502,
-        'OPENROUTER_SERVICE_UNAVAILABLE': 503,
-        'OPENROUTER_TIMEOUT': 504,
-        'OPENROUTER_GATEWAY_TIMEOUT': 504,
+        VALIDATION_ERROR: 400,
+        OPENROUTER_BAD_REQUEST: 400,
+        OPENROUTER_UNAUTHORIZED: 401,
+        OPENROUTER_FORBIDDEN: 403,
+        OPENROUTER_NOT_FOUND: 404,
+        OPENROUTER_RATE_LIMIT: 429,
+        OPENROUTER_SERVER_ERROR: 500,
+        OPENROUTER_BAD_GATEWAY: 502,
+        OPENROUTER_SERVICE_UNAVAILABLE: 503,
+        OPENROUTER_TIMEOUT: 504,
+        OPENROUTER_GATEWAY_TIMEOUT: 504,
       };
-      
+
       const status = statusMap[openRouterError.code] || 500;
-      
+
       return new Response(
-        JSON.stringify({ 
-          error: 'Generation Failed',
+        JSON.stringify({
+          error: "Generation Failed",
           message: openRouterError.message,
           code: openRouterError.code,
           details: openRouterError.details,
         } as ErrorResponseDTO),
-        { 
-          status, 
-          headers: { 'Content-Type': 'application/json' } 
+        {
+          status,
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
-    
+
     // Handle unknown errors
     return new Response(
       JSON.stringify({
-        error: 'Generation Failed',
-        message: 'An unexpected error occurred while generating flashcards',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: "Generation Failed",
+        message: "An unexpected error occurred while generating flashcards",
+        details: error instanceof Error ? error.message : "Unknown error",
       } as ErrorResponseDTO),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }

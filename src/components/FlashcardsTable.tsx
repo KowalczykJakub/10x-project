@@ -1,13 +1,6 @@
-import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import type { FlashcardDTO } from '@/types';
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { FlashcardDTO } from "@/types";
 
 interface FlashcardsTableProps {
   flashcards: FlashcardDTO[];
@@ -17,12 +10,12 @@ interface FlashcardsTableProps {
 
 const getSourceLabel = (source: string): string => {
   switch (source) {
-    case 'ai-full':
-      return 'AI';
-    case 'ai-edited':
-      return 'AI (edytowane)';
-    case 'manual':
-      return 'Ręczne';
+    case "ai-full":
+      return "AI";
+    case "ai-edited":
+      return "AI (edytowane)";
+    case "manual":
+      return "Ręczne";
     default:
       return source;
   }
@@ -30,21 +23,15 @@ const getSourceLabel = (source: string): string => {
 
 const truncate = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength) + '...';
+  return text.substring(0, maxLength) + "...";
 };
 
-export default function FlashcardsTable({
-  flashcards,
-  onEdit,
-  onDelete,
-}: FlashcardsTableProps) {
+export default function FlashcardsTable({ flashcards, onEdit, onDelete }: FlashcardsTableProps) {
   if (flashcards.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
         <p className="text-lg">Nie masz jeszcze żadnych fiszek</p>
-        <p className="text-sm mt-2">
-          Wygeneruj fiszki z AI lub dodaj je ręcznie
-        </p>
+        <p className="text-sm mt-2">Wygeneruj fiszki z AI lub dodaj je ręcznie</p>
       </div>
     );
   }
@@ -64,19 +51,13 @@ export default function FlashcardsTable({
           {flashcards.map((flashcard) => (
             <TableRow key={flashcard.id}>
               <TableCell className="max-w-xs">
-                <p className="whitespace-pre-wrap break-words">
-                  {truncate(flashcard.front, 100)}
-                </p>
+                <p className="whitespace-pre-wrap break-words">{truncate(flashcard.front, 100)}</p>
               </TableCell>
               <TableCell className="max-w-xs">
-                <p className="whitespace-pre-wrap break-words">
-                  {truncate(flashcard.back, 100)}
-                </p>
+                <p className="whitespace-pre-wrap break-words">{truncate(flashcard.back, 100)}</p>
               </TableCell>
               <TableCell>
-                <span className="text-sm text-muted-foreground">
-                  {getSourceLabel(flashcard.source)}
-                </span>
+                <span className="text-sm text-muted-foreground">{getSourceLabel(flashcard.source)}</span>
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex gap-2 justify-end">

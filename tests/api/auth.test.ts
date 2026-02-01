@@ -1,17 +1,17 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll } from "vitest";
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = "http://localhost:3000";
 
-describe('POST /api/auth/register', () => {
-  it('should register new user with valid data', async () => {
+describe("POST /api/auth/register", () => {
+  it("should register new user with valid data", async () => {
     const email = `user-${Date.now()}-${Math.random().toString(36).substring(7)}@test.com`;
     const response = await fetch(`${BASE_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email,
-        password: 'Test123!@',
-        confirmPassword: 'Test123!@',
+        password: "Test123!@",
+        confirmPassword: "Test123!@",
       }),
     });
 
@@ -20,42 +20,42 @@ describe('POST /api/auth/register', () => {
     expect(data.message || data.user).toBeDefined();
   });
 
-  it('should reject registration with weak password', async () => {
+  it("should reject registration with weak password", async () => {
     const response = await fetch(`${BASE_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: 'test@test.com',
-        password: 'weak',
-        confirmPassword: 'weak',
+        email: "test@test.com",
+        password: "weak",
+        confirmPassword: "weak",
       }),
     });
 
     expect(response.status).toBe(400);
   });
 
-  it('should reject registration with mismatched passwords', async () => {
+  it("should reject registration with mismatched passwords", async () => {
     const response = await fetch(`${BASE_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: 'test@test.com',
-        password: 'Test123!@',
-        confirmPassword: 'Different123!@',
+        email: "test@test.com",
+        password: "Test123!@",
+        confirmPassword: "Different123!@",
       }),
     });
 
     expect(response.status).toBe(400);
   });
 
-  it('should reject registration with invalid email', async () => {
+  it("should reject registration with invalid email", async () => {
     const response = await fetch(`${BASE_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: 'invalid-email',
-        password: 'Test123!@',
-        confirmPassword: 'Test123!@',
+        email: "invalid-email",
+        password: "Test123!@",
+        confirmPassword: "Test123!@",
       }),
     });
 
@@ -63,15 +63,15 @@ describe('POST /api/auth/register', () => {
   });
 });
 
-describe('POST /api/auth/login', () => {
+describe("POST /api/auth/login", () => {
   const testEmail = `login-test-${Date.now()}-${Math.random().toString(36).substring(7)}@test.com`;
-  const testPassword = 'Test123!@';
+  const testPassword = "Test123!@";
 
   beforeAll(async () => {
     // Create test user
     await fetch(`${BASE_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: testEmail,
         password: testPassword,
@@ -80,10 +80,10 @@ describe('POST /api/auth/login', () => {
     });
   });
 
-  it('should login with correct credentials', async () => {
+  it("should login with correct credentials", async () => {
     const response = await fetch(`${BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: testEmail,
         password: testPassword,
@@ -95,25 +95,25 @@ describe('POST /api/auth/login', () => {
     expect(data.user || data.message).toBeDefined();
   });
 
-  it('should reject login with wrong password', async () => {
+  it("should reject login with wrong password", async () => {
     const response = await fetch(`${BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: testEmail,
-        password: 'WrongPassword123!@',
+        password: "WrongPassword123!@",
       }),
     });
 
     expect(response.status).toBe(401);
   });
 
-  it('should reject login with non-existent user', async () => {
+  it("should reject login with non-existent user", async () => {
     const response = await fetch(`${BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: 'nonexistent@test.com',
+        email: "nonexistent@test.com",
         password: testPassword,
       }),
     });

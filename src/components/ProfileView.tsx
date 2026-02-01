@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { supabaseBrowser } from '@/db/supabase-browser';
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabaseBrowser } from "@/db/supabase-browser";
 
 interface UserProfile {
   email: string;
@@ -15,20 +15,25 @@ export default function ProfileView() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const { data: { user }, error } = await supabaseBrowser.auth.getUser();
-        
+        const {
+          data: { user },
+          error,
+        } = await supabaseBrowser.auth.getUser();
+
         if (error || !user) {
-          console.error('Failed to fetch user:', error);
+          // eslint-disable-next-line no-console
+          console.error("Failed to fetch user:", error);
           return;
         }
 
         setProfile({
-          email: user.email || '',
-          createdAt: user.created_at || '',
+          email: user.email || "",
+          createdAt: user.created_at || "",
           emailVerified: !!user.email_confirmed_at,
         });
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        // eslint-disable-next-line no-console
+        console.error("Error fetching profile:", error);
       } finally {
         setLoading(false);
       }
@@ -61,18 +66,16 @@ export default function ProfileView() {
       <Card>
         <CardHeader>
           <CardTitle>Informacje o koncie</CardTitle>
-          <CardDescription>
-            Twoje dane użytkownika
-          </CardDescription>
+          <CardDescription>Twoje dane użytkownika</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-muted-foreground">Email</label>
-            <p className="text-base">{profile?.email || 'Brak danych'}</p>
+            <span className="text-sm font-medium text-muted-foreground">Email</span>
+            <p className="text-base">{profile?.email || "Brak danych"}</p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-muted-foreground">Status weryfikacji</label>
+            <span className="text-sm font-medium text-muted-foreground">Status weryfikacji</span>
             <div className="flex items-center gap-2">
               {profile?.emailVerified ? (
                 <>
@@ -83,24 +86,22 @@ export default function ProfileView() {
                 <>
                   <span className="text-yellow-600">⚠</span>
                   <p className="text-base">Email niezweryfikowany</p>
-                  <p className="text-sm text-muted-foreground">
-                    (Sprawdź swoją skrzynkę email)
-                  </p>
+                  <p className="text-sm text-muted-foreground">(Sprawdź swoją skrzynkę email)</p>
                 </>
               )}
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-muted-foreground">Data utworzenia konta</label>
+            <span className="text-sm font-medium text-muted-foreground">Data utworzenia konta</span>
             <p className="text-base">
-              {profile?.createdAt 
-                ? new Date(profile.createdAt).toLocaleDateString('pl-PL', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
+              {profile?.createdAt
+                ? new Date(profile.createdAt).toLocaleDateString("pl-PL", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })
-                : 'Brak danych'}
+                : "Brak danych"}
             </p>
           </div>
         </CardContent>
@@ -110,9 +111,7 @@ export default function ProfileView() {
       <Card>
         <CardHeader>
           <CardTitle>O aplikacji</CardTitle>
-          <CardDescription>
-            10x-Cards - Fiszki generowane przez AI
-          </CardDescription>
+          <CardDescription>10x-Cards - Fiszki generowane przez AI</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -128,11 +127,21 @@ export default function ProfileView() {
           <div className="space-y-2 pt-4 border-t">
             <h3 className="font-semibold">Funkcje</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>🎯 <strong>Generowanie AI</strong> - Automatyczne tworzenie fiszek</li>
-              <li>📚 <strong>Zarządzanie</strong> - Edycja, filtrowanie, sortowanie</li>
-              <li>🎓 <strong>Sesja nauki</strong> - Immersyjny tryb z oceną trudności</li>
-              <li>📊 <strong>Historia</strong> - Statystyki skuteczności generowania</li>
-              <li>🔐 <strong>Bezpieczeństwo</strong> - Twoje dane są prywatne i chronione</li>
+              <li>
+                🎯 <strong>Generowanie AI</strong> - Automatyczne tworzenie fiszek
+              </li>
+              <li>
+                📚 <strong>Zarządzanie</strong> - Edycja, filtrowanie, sortowanie
+              </li>
+              <li>
+                🎓 <strong>Sesja nauki</strong> - Immersyjny tryb z oceną trudności
+              </li>
+              <li>
+                📊 <strong>Historia</strong> - Statystyki skuteczności generowania
+              </li>
+              <li>
+                🔐 <strong>Bezpieczeństwo</strong> - Twoje dane są prywatne i chronione
+              </li>
             </ul>
           </div>
         </CardContent>

@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{
@@ -23,15 +23,15 @@ export default function LoginForm() {
     const errors: typeof fieldErrors = {};
 
     if (!email) {
-      errors.email = 'Email jest wymagany';
+      errors.email = "Email jest wymagany";
     } else if (!validateEmail(email)) {
-      errors.email = 'Wprowadź prawidłowy adres email';
+      errors.email = "Wprowadź prawidłowy adres email";
     }
 
     if (!password) {
-      errors.password = 'Hasło jest wymagane';
+      errors.password = "Hasło jest wymagane";
     } else if (password.length < 6) {
-      errors.password = 'Hasło musi mieć minimum 6 znaków';
+      errors.password = "Hasło musi mieć minimum 6 znaków";
     }
 
     setFieldErrors(errors);
@@ -51,10 +51,10 @@ export default function LoginForm() {
 
     try {
       // Call login API endpoint
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
@@ -66,20 +66,20 @@ export default function LoginForm() {
         if (data.details) {
           setFieldErrors(data.details);
         }
-        throw new Error(data.message || 'Wystąpił błąd podczas logowania');
+        throw new Error(data.message || "Wystąpił błąd podczas logowania");
       }
 
       // Success - show toast and redirect
-      toast.success('Zalogowano pomyślnie!');
-      
+      toast.success("Zalogowano pomyślnie!");
+
       // Redirect to generate page
-      window.location.href = '/generate';
+      window.location.href = "/generate";
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
         toast.error(err.message);
       } else {
-        const errorMsg = 'Wystąpił błąd. Spróbuj ponownie.';
+        const errorMsg = "Wystąpił błąd. Spróbuj ponownie.";
         setError(errorMsg);
         toast.error(errorMsg);
       }
@@ -92,9 +92,7 @@ export default function LoginForm() {
     <Card className="w-full">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold">Zaloguj się</CardTitle>
-        <CardDescription>
-          Wprowadź swoje dane, aby uzyskać dostęp do konta
-        </CardDescription>
+        <CardDescription>Wprowadź swoje dane, aby uzyskać dostęp do konta</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -156,27 +154,19 @@ export default function LoginForm() {
 
           {/* Forgot Password Link */}
           <div className="flex justify-end">
-            <a
-              href="/forgot-password"
-              className="text-sm text-primary hover:underline"
-            >
+            <a href="/forgot-password" className="text-sm text-primary hover:underline">
               Zapomniałeś hasła?
             </a>
           </div>
 
           {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full"
-            size="lg"
-            disabled={loading}
-          >
-            {loading ? 'Logowanie...' : 'Zaloguj się'}
+          <Button type="submit" className="w-full" size="lg" disabled={loading}>
+            {loading ? "Logowanie..." : "Zaloguj się"}
           </Button>
 
           {/* Register Link */}
           <div className="text-center text-sm text-muted-foreground">
-            Nie masz konta?{' '}
+            Nie masz konta?{" "}
             <a href="/register" className="text-primary hover:underline font-medium">
               Zarejestruj się
             </a>

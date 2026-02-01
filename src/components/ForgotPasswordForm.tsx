@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export default function ForgotPasswordForm() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -22,9 +22,9 @@ export default function ForgotPasswordForm() {
     const errors: typeof fieldErrors = {};
 
     if (!email) {
-      errors.email = 'Email jest wymagany';
+      errors.email = "Email jest wymagany";
     } else if (!validateEmail(email)) {
-      errors.email = 'Wprowadź prawidłowy adres email';
+      errors.email = "Wprowadź prawidłowy adres email";
     }
 
     setFieldErrors(errors);
@@ -45,10 +45,10 @@ export default function ForgotPasswordForm() {
 
     try {
       // Call forgot password API endpoint
-      const response = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
       });
@@ -60,18 +60,18 @@ export default function ForgotPasswordForm() {
         if (data.details) {
           setFieldErrors(data.details);
         }
-        throw new Error(data.message || 'Wystąpił błąd podczas wysyłania linku');
+        throw new Error(data.message || "Wystąpił błąd podczas wysyłania linku");
       }
 
       // Success
       setSuccess(true);
-      toast.success('Link do resetowania hasła został wysłany');
+      toast.success("Link do resetowania hasła został wysłany");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
         toast.error(err.message);
       } else {
-        const errorMsg = 'Wystąpił błąd. Spróbuj ponownie.';
+        const errorMsg = "Wystąpił błąd. Spróbuj ponownie.";
         setError(errorMsg);
         toast.error(errorMsg);
       }
@@ -85,28 +85,17 @@ export default function ForgotPasswordForm() {
       <Card className="w-full">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Sprawdź swoją skrzynkę email</CardTitle>
-          <CardDescription>
-            Link został wysłany pomyślnie
-          </CardDescription>
+          <CardDescription>Link został wysłany pomyślnie</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div
-            className="p-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-md"
-            role="alert"
-          >
+          <div className="p-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-md" role="alert">
             <p className="font-medium mb-1">Link do resetowania hasła został wysłany!</p>
             <p>
               Sprawdź swoją skrzynkę email na adres <strong>{email}</strong>. Kliknij w link, aby ustawić nowe hasło.
             </p>
-            <p className="mt-2 text-xs">
-              Link pozostanie aktywny przez 1 godzinę.
-            </p>
+            <p className="mt-2 text-xs">Link pozostanie aktywny przez 1 godzinę.</p>
           </div>
-          <Button
-            asChild
-            className="w-full"
-            size="lg"
-          >
+          <Button asChild className="w-full" size="lg">
             <a href="/login">Wróć do logowania</a>
           </Button>
         </CardContent>
@@ -118,9 +107,7 @@ export default function ForgotPasswordForm() {
     <Card className="w-full">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold">Zresetuj hasło</CardTitle>
-        <CardDescription>
-          Wprowadź swój adres email, a wyślemy Ci link do zresetowania hasła
-        </CardDescription>
+        <CardDescription>Wprowadź swój adres email, a wyślemy Ci link do zresetowania hasła</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -157,21 +144,13 @@ export default function ForgotPasswordForm() {
           </div>
 
           {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full"
-            size="lg"
-            disabled={loading}
-          >
-            {loading ? 'Wysyłanie...' : 'Wyślij link resetujący'}
+          <Button type="submit" className="w-full" size="lg" disabled={loading}>
+            {loading ? "Wysyłanie..." : "Wyślij link resetujący"}
           </Button>
 
           {/* Back to Login Link */}
           <div className="text-center">
-            <a
-              href="/login"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
+            <a href="/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               ← Wróć do logowania
             </a>
           </div>

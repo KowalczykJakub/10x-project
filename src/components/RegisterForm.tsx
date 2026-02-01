@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export default function RegisterForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -27,16 +27,16 @@ export default function RegisterForm() {
     const errors: string[] = [];
 
     if (password.length < 8) {
-      errors.push('Hasło musi mieć minimum 8 znaków');
+      errors.push("Hasło musi mieć minimum 8 znaków");
     }
     if (!/[A-Z]/.test(password)) {
-      errors.push('Hasło musi zawierać przynajmniej jedną wielką literę');
+      errors.push("Hasło musi zawierać przynajmniej jedną wielką literę");
     }
     if (!/[0-9]/.test(password)) {
-      errors.push('Hasło musi zawierać przynajmniej jedną cyfrę');
+      errors.push("Hasło musi zawierać przynajmniej jedną cyfrę");
     }
     if (!/[^A-Za-z0-9]/.test(password)) {
-      errors.push('Hasło musi zawierać przynajmniej jeden znak specjalny');
+      errors.push("Hasło musi zawierać przynajmniej jeden znak specjalny");
     }
 
     return errors;
@@ -46,13 +46,13 @@ export default function RegisterForm() {
     const errors: typeof fieldErrors = {};
 
     if (!email) {
-      errors.email = 'Email jest wymagany';
+      errors.email = "Email jest wymagany";
     } else if (!validateEmail(email)) {
-      errors.email = 'Wprowadź prawidłowy adres email';
+      errors.email = "Wprowadź prawidłowy adres email";
     }
 
     if (!password) {
-      errors.password = 'Hasło jest wymagane';
+      errors.password = "Hasło jest wymagane";
     } else {
       const passwordErrors = validatePassword(password);
       if (passwordErrors.length > 0) {
@@ -61,9 +61,9 @@ export default function RegisterForm() {
     }
 
     if (!confirmPassword) {
-      errors.confirmPassword = 'Potwierdzenie hasła jest wymagane';
+      errors.confirmPassword = "Potwierdzenie hasła jest wymagane";
     } else if (password !== confirmPassword) {
-      errors.confirmPassword = 'Hasła nie są identyczne';
+      errors.confirmPassword = "Hasła nie są identyczne";
     }
 
     setFieldErrors(errors);
@@ -84,10 +84,10 @@ export default function RegisterForm() {
 
     try {
       // Call register API endpoint
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password, confirmPassword }),
       });
@@ -99,24 +99,24 @@ export default function RegisterForm() {
         if (data.details) {
           setFieldErrors(data.details);
         }
-        throw new Error(data.message || 'Wystąpił błąd podczas rejestracji');
+        throw new Error(data.message || "Wystąpił błąd podczas rejestracji");
       }
 
       // Success
       setSuccess(true);
       setRequiresConfirmation(data.requiresConfirmation);
-      
+
       if (data.requiresConfirmation) {
-        toast.info('Sprawdź swoją skrzynkę email, aby zweryfikować konto');
+        toast.info("Sprawdź swoją skrzynkę email, aby zweryfikować konto");
       } else {
-        toast.success('Konto zostało utworzone! Możesz się teraz zalogować.');
+        toast.success("Konto zostało utworzone! Możesz się teraz zalogować.");
       }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
         toast.error(err.message);
       } else {
-        const errorMsg = 'Wystąpił błąd. Spróbuj ponownie.';
+        const errorMsg = "Wystąpił błąd. Spróbuj ponownie.";
         setError(errorMsg);
         toast.error(errorMsg);
       }
@@ -130,33 +130,20 @@ export default function RegisterForm() {
       <Card className="w-full">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">
-            {requiresConfirmation ? 'Sprawdź swoją skrzynkę email' : 'Konto utworzone!'}
+            {requiresConfirmation ? "Sprawdź swoją skrzynkę email" : "Konto utworzone!"}
           </CardTitle>
-          <CardDescription>
-            Konto zostało utworzone pomyślnie
-          </CardDescription>
+          <CardDescription>Konto zostało utworzone pomyślnie</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div
-            className="p-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-md"
-            role="alert"
-          >
+          <div className="p-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-md" role="alert">
             <p className="font-medium mb-1">Konto zostało utworzone!</p>
             {requiresConfirmation ? (
-              <p>
-                Sprawdź swoją skrzynkę email, aby zweryfikować adres. Po weryfikacji będziesz mógł się zalogować.
-              </p>
+              <p>Sprawdź swoją skrzynkę email, aby zweryfikować adres. Po weryfikacji będziesz mógł się zalogować.</p>
             ) : (
-              <p>
-                Możesz się teraz zalogować i zacząć korzystać z aplikacji. Zalecamy weryfikację adresu email.
-              </p>
+              <p>Możesz się teraz zalogować i zacząć korzystać z aplikacji. Zalecamy weryfikację adresu email.</p>
             )}
           </div>
-          <Button
-            asChild
-            className="w-full"
-            size="lg"
-          >
+          <Button asChild className="w-full" size="lg">
             <a href="/login">Przejdź do logowania</a>
           </Button>
         </CardContent>
@@ -168,9 +155,7 @@ export default function RegisterForm() {
     <Card className="w-full">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold">Utwórz konto</CardTitle>
-        <CardDescription>
-          Wprowadź swoje dane, aby założyć nowe konto
-        </CardDescription>
+        <CardDescription>Wprowadź swoje dane, aby założyć nowe konto</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -257,18 +242,13 @@ export default function RegisterForm() {
           </div>
 
           {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full"
-            size="lg"
-            disabled={loading}
-          >
-            {loading ? 'Tworzenie konta...' : 'Zarejestruj się'}
+          <Button type="submit" className="w-full" size="lg" disabled={loading}>
+            {loading ? "Tworzenie konta..." : "Zarejestruj się"}
           </Button>
 
           {/* Login Link */}
           <div className="text-center text-sm text-muted-foreground">
-            Masz już konto?{' '}
+            Masz już konto?{" "}
             <a href="/login" className="text-primary hover:underline font-medium">
               Zaloguj się
             </a>

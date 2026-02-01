@@ -1,5 +1,5 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServerInstance } from '../../../db/supabase.client.ts';
+import type { APIRoute } from "astro";
+import { createSupabaseServerInstance } from "../../../db/supabase.client.ts";
 
 export const prerender = false;
 
@@ -10,21 +10,21 @@ export const POST: APIRoute = async ({ locals, cookies, request }) => {
   if (!session) {
     return new Response(
       JSON.stringify({
-        error: 'Unauthorized',
-        message: 'Brak sesji użytkownika',
+        error: "Unauthorized",
+        message: "Brak sesji użytkownika",
       }),
-      { 
-        status: 401, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
 
   try {
     // Create Supabase client
-    const supabase = createSupabaseServerInstance({ 
-      cookies, 
-      headers: request.headers 
+    const supabase = createSupabaseServerInstance({
+      cookies,
+      headers: request.headers,
     });
 
     // Sign out - this will clear the session cookies
@@ -35,24 +35,25 @@ export const POST: APIRoute = async ({ locals, cookies, request }) => {
     }
 
     return new Response(
-      JSON.stringify({ 
-        message: 'Wylogowano pomyślnie' 
+      JSON.stringify({
+        message: "Wylogowano pomyślnie",
       }),
-      { 
-        status: 200, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
       }
     );
   } catch (error) {
-    console.error('Logout error:', error);
+    // eslint-disable-next-line no-console
+    console.error("Logout error:", error);
     return new Response(
       JSON.stringify({
-        error: 'Internal Server Error',
-        message: 'Nie udało się wylogować',
+        error: "Internal Server Error",
+        message: "Nie udało się wylogować",
       }),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }

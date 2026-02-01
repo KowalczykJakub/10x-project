@@ -1,24 +1,21 @@
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import type { FlashcardDTO } from '@/types';
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import type { FlashcardDTO } from "@/types";
 
 interface FlashcardDisplayProps {
   flashcard: FlashcardDTO;
-  onRate: (rating: 'hard' | 'medium' | 'easy') => void;
+  onRate: (rating: "hard" | "medium" | "easy") => void;
 }
 
-export default function FlashcardDisplay({
-  flashcard,
-  onRate,
-}: FlashcardDisplayProps) {
+export default function FlashcardDisplay({ flashcard, onRate }: FlashcardDisplayProps) {
   const [isRevealed, setIsRevealed] = useState(false);
 
   const handleReveal = () => {
     setIsRevealed(true);
   };
 
-  const handleRate = (rating: 'hard' | 'medium' | 'easy') => {
+  const handleRate = (rating: "hard" | "medium" | "easy") => {
     setIsRevealed(false);
     onRate(rating);
   };
@@ -31,9 +28,7 @@ export default function FlashcardDisplay({
           <div className="space-y-6">
             <div className="text-center">
               <p className="text-sm text-muted-foreground mb-2">Przód fiszki</p>
-              <p className="text-2xl md:text-3xl font-medium whitespace-pre-wrap">
-                {flashcard.front}
-              </p>
+              <p className="text-2xl md:text-3xl font-medium whitespace-pre-wrap">{flashcard.front}</p>
             </div>
 
             {/* Back of card - shown after reveal */}
@@ -41,9 +36,7 @@ export default function FlashcardDisplay({
               <div className="pt-6 border-t">
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground mb-2">Tył fiszki</p>
-                  <p className="text-xl md:text-2xl whitespace-pre-wrap">
-                    {flashcard.back}
-                  </p>
+                  <p className="text-xl md:text-2xl whitespace-pre-wrap">{flashcard.back}</p>
                 </div>
               </div>
             )}
@@ -53,11 +46,7 @@ export default function FlashcardDisplay({
 
       {/* Action buttons */}
       {!isRevealed ? (
-        <Button
-          size="lg"
-          onClick={handleReveal}
-          className="min-w-[200px]"
-        >
+        <Button size="lg" onClick={handleReveal} className="min-w-[200px]">
           Pokaż odpowiedź
         </Button>
       ) : (
@@ -65,7 +54,7 @@ export default function FlashcardDisplay({
           <Button
             variant="outline"
             size="lg"
-            onClick={() => handleRate('hard')}
+            onClick={() => handleRate("hard")}
             className="min-w-[150px] border-red-500 text-red-600 hover:bg-red-50"
           >
             🔴 Trudne
@@ -73,7 +62,7 @@ export default function FlashcardDisplay({
           <Button
             variant="outline"
             size="lg"
-            onClick={() => handleRate('medium')}
+            onClick={() => handleRate("medium")}
             className="min-w-[150px] border-yellow-500 text-yellow-600 hover:bg-yellow-50"
           >
             🟡 Średnie
@@ -81,7 +70,7 @@ export default function FlashcardDisplay({
           <Button
             variant="outline"
             size="lg"
-            onClick={() => handleRate('easy')}
+            onClick={() => handleRate("easy")}
             className="min-w-[150px] border-green-500 text-green-600 hover:bg-green-50"
           >
             🟢 Łatwe
@@ -91,9 +80,7 @@ export default function FlashcardDisplay({
 
       {/* Keyboard shortcuts hint */}
       <p className="text-xs text-muted-foreground text-center">
-        {!isRevealed
-          ? 'Naciśnij Spację, aby pokazać odpowiedź'
-          : 'Naciśnij 1 (Trudne), 2 (Średnie) lub 3 (Łatwe)'}
+        {!isRevealed ? "Naciśnij Spację, aby pokazać odpowiedź" : "Naciśnij 1 (Trudne), 2 (Średnie) lub 3 (Łatwe)"}
       </p>
     </div>
   );

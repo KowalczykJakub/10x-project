@@ -1,7 +1,7 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServerInstance } from '../../../db/supabase.client.ts';
-import { registerSchema } from '../../../lib/schemas/auth.schema.ts';
-import { getAuthErrorMessage } from '../../../lib/utils/auth-errors.ts';
+import type { APIRoute } from "astro";
+import { createSupabaseServerInstance } from "../../../db/supabase.client.ts";
+import { registerSchema } from "../../../lib/schemas/auth.schema.ts";
+import { getAuthErrorMessage } from "../../../lib/utils/auth-errors.ts";
 
 export const prerender = false;
 
@@ -12,17 +12,17 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     // Validate input with Zod
     const validationResult = registerSchema.safeParse(body);
-    
+
     if (!validationResult.success) {
       return new Response(
         JSON.stringify({
-          error: 'Validation Error',
-          message: 'Nieprawidłowe dane wejściowe',
+          error: "Validation Error",
+          message: "Nieprawidłowe dane wejściowe",
           details: validationResult.error.flatten().fieldErrors,
         }),
-        { 
-          status: 400, 
-          headers: { 'Content-Type': 'application/json' } 
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
@@ -30,9 +30,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const { email, password } = validationResult.data;
 
     // Create Supabase client
-    const supabase = createSupabaseServerInstance({ 
-      cookies, 
-      headers: request.headers 
+    const supabase = createSupabaseServerInstance({
+      cookies,
+      headers: request.headers,
     });
 
     // Attempt to sign up
@@ -50,12 +50,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       const errorMessage = getAuthErrorMessage(error);
       return new Response(
         JSON.stringify({
-          error: 'Registration Error',
+          error: "Registration Error",
           message: errorMessage,
         }),
-        { 
-          status: 400, 
-          headers: { 'Content-Type': 'application/json' } 
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
@@ -65,30 +65,31 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     return new Response(
       JSON.stringify({
-        message: requiresConfirmation 
-          ? 'Konto zostało utworzone! Sprawdź swoją skrzynkę email, aby zweryfikować adres.'
-          : 'Konto zostało utworzone pomyślnie!',
+        message: requiresConfirmation
+          ? "Konto zostało utworzone! Sprawdź swoją skrzynkę email, aby zweryfikować adres."
+          : "Konto zostało utworzone pomyślnie!",
         user: {
           id: data.user?.id,
           email: data.user?.email,
         },
         requiresConfirmation,
       }),
-      { 
-        status: 201, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
       }
     );
   } catch (error) {
-    console.error('Registration error:', error);
+    // eslint-disable-next-line no-console
+    console.error("Registration error:", error);
     return new Response(
       JSON.stringify({
-        error: 'Internal Server Error',
-        message: 'Wystąpił błąd serwera. Spróbuj ponownie.',
+        error: "Internal Server Error",
+        message: "Wystąpił błąd serwera. Spróbuj ponownie.",
       }),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }

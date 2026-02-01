@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { setupTestUser, loginTestUser } from './setup';
+import { describe, it, expect, beforeAll } from "vitest";
+import { setupTestUser, loginTestUser } from "./setup";
 
-const BASE_URL = 'http://localhost:3000';
-let authCookie = '';
+const BASE_URL = "http://localhost:3000";
+let authCookie = "";
 let createdFlashcardId: number;
 
 beforeAll(async () => {
@@ -11,56 +11,56 @@ beforeAll(async () => {
   authCookie = await loginTestUser(testUser.email, testUser.password);
 });
 
-describe('POST /api/flashcards', () => {
-  it('should create flashcard with valid data', async () => {
+describe("POST /api/flashcards", () => {
+  it("should create flashcard with valid data", async () => {
     const response = await fetch(`${BASE_URL}/api/flashcards`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Cookie: authCookie,
       },
       body: JSON.stringify({
-        front: 'Test question',
-        back: 'Test answer',
+        front: "Test question",
+        back: "Test answer",
       }),
     });
 
     expect(response.status).toBe(201);
     const data = await response.json();
     expect(data.id).toBeDefined();
-    expect(data.front).toBe('Test question');
-    expect(data.back).toBe('Test answer');
-    expect(data.source).toBe('manual');
+    expect(data.front).toBe("Test question");
+    expect(data.back).toBe("Test answer");
+    expect(data.source).toBe("manual");
 
     createdFlashcardId = data.id;
   });
 
-  it('should reject empty front', async () => {
+  it("should reject empty front", async () => {
     const response = await fetch(`${BASE_URL}/api/flashcards`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Cookie: authCookie,
       },
       body: JSON.stringify({
-        front: '',
-        back: 'Answer',
+        front: "",
+        back: "Answer",
       }),
     });
 
     expect(response.status).toBe(400);
   });
 
-  it('should reject empty back', async () => {
+  it("should reject empty back", async () => {
     const response = await fetch(`${BASE_URL}/api/flashcards`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Cookie: authCookie,
       },
       body: JSON.stringify({
-        front: 'Question',
-        back: '',
+        front: "Question",
+        back: "",
       }),
     });
 
@@ -68,8 +68,8 @@ describe('POST /api/flashcards', () => {
   });
 });
 
-describe('GET /api/flashcards', () => {
-  it('should list flashcards for authenticated user', async () => {
+describe("GET /api/flashcards", () => {
+  it("should list flashcards for authenticated user", async () => {
     const response = await fetch(`${BASE_URL}/api/flashcards`, {
       headers: { Cookie: authCookie },
     });
@@ -81,7 +81,7 @@ describe('GET /api/flashcards', () => {
     expect(data.pagination).toBeDefined();
   });
 
-  it('should support pagination', async () => {
+  it("should support pagination", async () => {
     const response = await fetch(`${BASE_URL}/api/flashcards?page=1&limit=5`, {
       headers: { Cookie: authCookie },
     });
@@ -93,62 +93,53 @@ describe('GET /api/flashcards', () => {
   });
 });
 
-describe('PATCH /api/flashcards/:id', () => {
-  it('should update flashcard', async () => {
-    const response = await fetch(
-      `${BASE_URL}/api/flashcards/${createdFlashcardId}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Cookie: authCookie,
-        },
-        body: JSON.stringify({
-          back: 'Updated answer',
-        }),
-      }
-    );
+describe("PATCH /api/flashcards/:id", () => {
+  it("should update flashcard", async () => {
+    const response = await fetch(`${BASE_URL}/api/flashcards/${createdFlashcardId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: authCookie,
+      },
+      body: JSON.stringify({
+        back: "Updated answer",
+      }),
+    });
 
     expect(response.status).toBe(200);
     const data = await response.json();
-    expect(data.back).toBe('Updated answer');
+    expect(data.back).toBe("Updated answer");
   });
 
-  it('should return 404 for non-existent flashcard', async () => {
+  it("should return 404 for non-existent flashcard", async () => {
     const response = await fetch(`${BASE_URL}/api/flashcards/999999`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Cookie: authCookie,
       },
-      body: JSON.stringify({ back: 'Test' }),
+      body: JSON.stringify({ back: "Test" }),
     });
 
     expect(response.status).toBe(404);
   });
 });
 
-describe('DELETE /api/flashcards/:id', () => {
-  it('should delete flashcard', async () => {
-    const response = await fetch(
-      `${BASE_URL}/api/flashcards/${createdFlashcardId}`,
-      {
-        method: 'DELETE',
-        headers: { Cookie: authCookie },
-      }
-    );
+describe("DELETE /api/flashcards/:id", () => {
+  it("should delete flashcard", async () => {
+    const response = await fetch(`${BASE_URL}/api/flashcards/${createdFlashcardId}`, {
+      method: "DELETE",
+      headers: { Cookie: authCookie },
+    });
 
     expect(response.status).toBe(200);
   });
 
-  it('should return 404 for already deleted flashcard', async () => {
-    const response = await fetch(
-      `${BASE_URL}/api/flashcards/${createdFlashcardId}`,
-      {
-        method: 'DELETE',
-        headers: { Cookie: authCookie },
-      }
-    );
+  it("should return 404 for already deleted flashcard", async () => {
+    const response = await fetch(`${BASE_URL}/api/flashcards/${createdFlashcardId}`, {
+      method: "DELETE",
+      headers: { Cookie: authCookie },
+    });
 
     expect(response.status).toBe(404);
   });

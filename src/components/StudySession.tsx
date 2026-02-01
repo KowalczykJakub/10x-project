@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import FlashcardDisplay from './FlashcardDisplay';
-import type { FlashcardDTO, FlashcardListResponseDTO } from '@/types';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import FlashcardDisplay from "./FlashcardDisplay";
+import type { FlashcardDTO, FlashcardListResponseDTO } from "@/types";
 
 export default function StudySession() {
   const [flashcards, setFlashcards] = useState<FlashcardDTO[]>([]);
@@ -27,20 +27,20 @@ export default function StudySession() {
         return;
       }
 
-      if (e.code === 'Space') {
+      if (e.code === "Space") {
         e.preventDefault();
         // Space bar to reveal - handled in FlashcardDisplay component
-      } else if (e.code === 'Digit1') {
-        handleRate('hard');
-      } else if (e.code === 'Digit2') {
-        handleRate('medium');
-      } else if (e.code === 'Digit3') {
-        handleRate('easy');
+      } else if (e.code === "Digit1") {
+        handleRate("hard");
+      } else if (e.code === "Digit2") {
+        handleRate("medium");
+      } else if (e.code === "Digit3") {
+        handleRate("easy");
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [currentIndex, isComplete, isLoading]);
 
   const fetchFlashcards = async () => {
@@ -49,17 +49,17 @@ export default function StudySession() {
 
     try {
       // Fetch all flashcards (no pagination for study session)
-      const response = await fetch('/api/flashcards?limit=100');
+      const response = await fetch("/api/flashcards?limit=100");
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Nie udało się pobrać fiszek');
+        throw new Error(data.message || "Nie udało się pobrać fiszek");
       }
 
       const data: FlashcardListResponseDTO = await response.json();
-      
+
       if (data.data.length === 0) {
-        setError('no-flashcards');
+        setError("no-flashcards");
         return;
       }
 
@@ -67,13 +67,13 @@ export default function StudySession() {
       const shuffled = [...data.data].sort(() => Math.random() - 0.5);
       setFlashcards(shuffled);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd');
+      setError(err instanceof Error ? err.message : "Wystąpił błąd");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRate = (rating: 'hard' | 'medium' | 'easy') => {
+  const handleRate = () => {
     setReviewedCount((prev) => prev + 1);
 
     // Move to next flashcard
@@ -88,8 +88,8 @@ export default function StudySession() {
   };
 
   const handleExit = () => {
-    if (window.confirm('Czy na pewno chcesz przerwać sesję nauki?')) {
-      window.location.href = '/flashcards';
+    if (window.confirm("Czy na pewno chcesz przerwać sesję nauki?")) {
+      window.location.href = "/flashcards";
     }
   };
 
@@ -119,7 +119,7 @@ export default function StudySession() {
   }
 
   // Error: No flashcards
-  if (error === 'no-flashcards') {
+  if (error === "no-flashcards") {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="w-full max-w-lg">
@@ -150,9 +150,7 @@ export default function StudySession() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="w-full max-w-lg">
           <CardHeader>
-            <CardTitle className="text-center text-destructive">
-              Błąd podczas ładowania
-            </CardTitle>
+            <CardTitle className="text-center text-destructive">Błąd podczas ładowania</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <p className="text-muted-foreground">{error}</p>
@@ -169,26 +167,16 @@ export default function StudySession() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="w-full max-w-lg">
           <CardHeader>
-            <CardTitle className="text-center text-2xl">
-              🎉 Sesja ukończona!
-            </CardTitle>
+            <CardTitle className="text-center text-2xl">🎉 Sesja ukończona!</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-6">
             <div>
-              <p className="text-4xl font-bold text-primary mb-2">
-                {reviewedCount}
-              </p>
-              <p className="text-muted-foreground">
-                {reviewedCount === 1 ? 'fiszka' : 'fiszek'} przejrzanych
-              </p>
+              <p className="text-4xl font-bold text-primary mb-2">{reviewedCount}</p>
+              <p className="text-muted-foreground">{reviewedCount === 1 ? "fiszka" : "fiszek"} przejrzanych</p>
             </div>
-            <p className="text-lg">
-              Dobra robota! Wróć jutro, aby powtórzyć materiał.
-            </p>
+            <p className="text-lg">Dobra robota! Wróć jutro, aby powtórzyć materiał.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button onClick={handleRestart}>
-                Rozpocznij ponownie
-              </Button>
+              <Button onClick={handleRestart}>Rozpocznij ponownie</Button>
               <Button variant="outline" asChild>
                 <a href="/flashcards">Moje fiszki</a>
               </Button>
@@ -211,12 +199,7 @@ export default function StudySession() {
             <p className="text-sm text-muted-foreground">
               Fiszka {currentIndex + 1} z {flashcards.length}
             </p>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleExit}
-              aria-label="Zakończ sesję"
-            >
+            <Button variant="ghost" size="sm" onClick={handleExit} aria-label="Zakończ sesję">
               ✕ Wyjdź
             </Button>
           </div>
@@ -226,10 +209,7 @@ export default function StudySession() {
 
       {/* Flashcard display */}
       <div className="container mx-auto px-4 py-8">
-        <FlashcardDisplay
-          flashcard={flashcards[currentIndex]}
-          onRate={handleRate}
-        />
+        <FlashcardDisplay flashcard={flashcards[currentIndex]} onRate={handleRate} />
       </div>
     </div>
   );

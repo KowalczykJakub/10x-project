@@ -1,6 +1,6 @@
-import { useState, type ChangeEvent } from 'react';
-import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { type ChangeEvent } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 interface TextInputProps {
   value: string;
@@ -17,11 +17,11 @@ export default function TextInput({ value, onChange, disabled }: TextInputProps)
   const charCount = value.length;
 
   const getCounterColor = (): string => {
-    if (charCount < MIN_CHARS) return 'text-red-600';
-    if (charCount < OPTIMAL_START) return 'text-yellow-600';
-    if (charCount <= OPTIMAL_END) return 'text-green-600';
-    if (charCount <= MAX_CHARS) return 'text-orange-600';
-    return 'text-red-600';
+    if (charCount < MIN_CHARS) return "text-red-600";
+    if (charCount < OPTIMAL_START) return "text-yellow-600";
+    if (charCount <= OPTIMAL_END) return "text-green-600";
+    if (charCount <= MAX_CHARS) return "text-orange-600";
+    return "text-red-600";
   };
 
   const getCounterMessage = (): string => {
@@ -31,7 +31,7 @@ export default function TextInput({ value, onChange, disabled }: TextInputProps)
     if (charCount > MAX_CHARS) {
       return `Maksimum ${MAX_CHARS} znaków`;
     }
-    return 'Długość tekstu jest odpowiednia';
+    return "Długość tekstu jest odpowiednia";
   };
 
   const isValid = charCount >= MIN_CHARS && charCount <= MAX_CHARS;
@@ -45,7 +45,7 @@ export default function TextInput({ value, onChange, disabled }: TextInputProps)
       <label htmlFor="source-text" className="text-sm font-medium block">
         Tekst źródłowy
       </label>
-      
+
       <Textarea
         id="source-text"
         placeholder="Wklej tutaj tekst, z którego chcesz wygenerować fiszki (1000-10000 znaków)..."
@@ -56,18 +56,12 @@ export default function TextInput({ value, onChange, disabled }: TextInputProps)
         aria-invalid={!isValid && charCount > 0}
         aria-describedby="char-counter"
       />
-      
-      <div
-        id="char-counter"
-        className="flex justify-between items-center text-sm"
-        aria-live="polite"
-      >
-        <span className={cn('font-medium', getCounterColor())}>
+
+      <div id="char-counter" className="flex justify-between items-center text-sm" aria-live="polite">
+        <span className={cn("font-medium", getCounterColor())}>
           {charCount} / {MAX_CHARS} znaków
         </span>
-        <span className={cn('text-muted-foreground', getCounterColor())}>
-          {getCounterMessage()}
-        </span>
+        <span className={cn("text-muted-foreground", getCounterColor())}>{getCounterMessage()}</span>
       </div>
     </div>
   );

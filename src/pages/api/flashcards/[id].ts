@@ -1,18 +1,13 @@
-import type { APIRoute } from 'astro';
-import type { 
-  FlashcardDTO,
-  UpdateFlashcardDTO,
-  DeleteFlashcardResponseDTO,
-  ErrorResponseDTO 
-} from '@/types';
-import { mockFlashcards } from './index';
+import type { APIRoute } from "astro";
+import type { UpdateFlashcardDTO, DeleteFlashcardResponseDTO, ErrorResponseDTO } from "@/types";
+import { mockFlashcards } from "./index";
 
 export const prerender = false;
 
 /**
  * PATCH /api/flashcards/[id]
  * Update an existing flashcard
- * 
+ *
  * MOCK VERSION: Updates in-memory store
  * TODO: Add database integration when ready
  */
@@ -22,26 +17,26 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
   // Check authentication
   if (!user) {
     const errorResponse: ErrorResponseDTO = {
-      error: 'Unauthorized',
-      message: 'Musisz być zalogowany',
+      error: "Unauthorized",
+      message: "Musisz być zalogowany",
     };
     return new Response(JSON.stringify(errorResponse), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
-  const id = parseInt(params.id || '0');
-  
+  const id = parseInt(params.id || "0");
+
   if (!id) {
     return new Response(
       JSON.stringify({
-        error: 'Bad Request',
-        message: 'Invalid flashcard ID'
+        error: "Bad Request",
+        message: "Invalid flashcard ID",
       } as ErrorResponseDTO),
-      { 
-        status: 400, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -52,12 +47,12 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
   } catch {
     return new Response(
       JSON.stringify({
-        error: 'Bad Request',
-        message: 'Invalid JSON in request body'
+        error: "Bad Request",
+        message: "Invalid JSON in request body",
       } as ErrorResponseDTO),
-      { 
-        status: 400, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -66,12 +61,12 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
   if (body.front !== undefined && (body.front.length === 0 || body.front.length > 200)) {
     return new Response(
       JSON.stringify({
-        error: 'Validation Error',
-        message: 'Front must be 1-200 characters'
+        error: "Validation Error",
+        message: "Front must be 1-200 characters",
       } as ErrorResponseDTO),
-      { 
-        status: 400, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -79,34 +74,34 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
   if (body.back !== undefined && (body.back.length === 0 || body.back.length > 500)) {
     return new Response(
       JSON.stringify({
-        error: 'Validation Error',
-        message: 'Back must be 1-500 characters'
+        error: "Validation Error",
+        message: "Back must be 1-500 characters",
       } as ErrorResponseDTO),
-      { 
-        status: 400, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
 
   try {
-    const flashcardIndex = mockFlashcards.findIndex(f => f.id === id);
-    
+    const flashcardIndex = mockFlashcards.findIndex((f) => f.id === id);
+
     if (flashcardIndex === -1) {
       return new Response(
         JSON.stringify({
-          error: 'Not Found',
-          message: 'Flashcard not found'
+          error: "Not Found",
+          message: "Flashcard not found",
         } as ErrorResponseDTO),
-        { 
-          status: 404, 
-          headers: { 'Content-Type': 'application/json' } 
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
 
     const flashcard = mockFlashcards[flashcardIndex];
-    
+
     // Update fields
     if (body.front !== undefined) {
       flashcard.front = body.front.trim();
@@ -118,28 +113,26 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
 
     mockFlashcards[flashcardIndex] = flashcard;
 
-    return new Response(
-      JSON.stringify(flashcard),
-      {
-        status: 200,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        }
-      }
-    );
+    return new Response(JSON.stringify(flashcard), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
   } catch (error) {
-    console.error('Update flashcard error:', error);
-    
+    // eslint-disable-next-line no-console
+    console.error("Update flashcard error:", error);
+
     return new Response(
       JSON.stringify({
-        error: 'Internal Server Error',
-        message: 'Failed to update flashcard',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: "Internal Server Error",
+        message: "Failed to update flashcard",
+        details: error instanceof Error ? error.message : "Unknown error",
       } as ErrorResponseDTO),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -148,7 +141,7 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
 /**
  * DELETE /api/flashcards/[id]
  * Delete a flashcard
- * 
+ *
  * MOCK VERSION: Removes from in-memory store
  * TODO: Add database integration when ready
  */
@@ -158,42 +151,42 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
   // Check authentication
   if (!user) {
     const errorResponse: ErrorResponseDTO = {
-      error: 'Unauthorized',
-      message: 'Musisz być zalogowany',
+      error: "Unauthorized",
+      message: "Musisz być zalogowany",
     };
     return new Response(JSON.stringify(errorResponse), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
-  const id = parseInt(params.id || '0');
-  
+  const id = parseInt(params.id || "0");
+
   if (!id) {
     return new Response(
       JSON.stringify({
-        error: 'Bad Request',
-        message: 'Invalid flashcard ID'
+        error: "Bad Request",
+        message: "Invalid flashcard ID",
       } as ErrorResponseDTO),
-      { 
-        status: 400, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
 
   try {
-    const flashcardIndex = mockFlashcards.findIndex(f => f.id === id);
-    
+    const flashcardIndex = mockFlashcards.findIndex((f) => f.id === id);
+
     if (flashcardIndex === -1) {
       return new Response(
         JSON.stringify({
-          error: 'Not Found',
-          message: 'Flashcard not found'
+          error: "Not Found",
+          message: "Flashcard not found",
         } as ErrorResponseDTO),
-        { 
-          status: 404, 
-          headers: { 'Content-Type': 'application/json' } 
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
@@ -201,32 +194,30 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     mockFlashcards.splice(flashcardIndex, 1);
 
     const response: DeleteFlashcardResponseDTO = {
-      message: 'Flashcard deleted successfully',
+      message: "Flashcard deleted successfully",
       id,
     };
 
-    return new Response(
-      JSON.stringify(response),
-      {
-        status: 200,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        }
-      }
-    );
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
   } catch (error) {
-    console.error('Delete flashcard error:', error);
-    
+    // eslint-disable-next-line no-console
+    console.error("Delete flashcard error:", error);
+
     return new Response(
       JSON.stringify({
-        error: 'Internal Server Error',
-        message: 'Failed to delete flashcard',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: "Internal Server Error",
+        message: "Failed to delete flashcard",
+        details: error instanceof Error ? error.message : "Unknown error",
       } as ErrorResponseDTO),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }

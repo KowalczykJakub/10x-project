@@ -12,7 +12,7 @@ const currentPath = Astro.url.pathname;
 
 // Get user from locals (set by middleware)
 const user = Astro.locals.user;
-const userEmail = user?.email || '';
+const userEmail = user?.email || "";
 ---
 
 <!doctype html>
@@ -28,7 +28,7 @@ const userEmail = user?.email || '';
     <div class="flex min-h-screen">
       <!-- Sidebar Navigation -->
       <Sidebar client:load currentPath={currentPath} userEmail={userEmail} />
-      
+
       <!-- Main Content Area -->
       <main class="flex-1 md:ml-64 transition-all duration-300">
         <div class="container mx-auto p-6 md:p-8">

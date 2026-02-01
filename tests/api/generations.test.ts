@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeAll } from 'vitest';
-import { setupTestUser, loginTestUser } from './setup';
+import { describe, it, expect, beforeAll } from "vitest";
+import { setupTestUser, loginTestUser } from "./setup";
 
-const BASE_URL = 'http://localhost:3000';
-let authCookie = '';
+const BASE_URL = "http://localhost:3000";
+let authCookie = "";
 
 beforeAll(async () => {
   // Setup: Register and login to get auth cookie
@@ -10,13 +10,13 @@ beforeAll(async () => {
   authCookie = await loginTestUser(testUser.email, testUser.password);
 });
 
-describe('POST /api/generations', () => {
-  it('should reject text under 1000 chars', async () => {
-    const sourceText = 'Too short';
+describe("POST /api/generations", () => {
+  it("should reject text under 1000 chars", async () => {
+    const sourceText = "Too short";
     const response = await fetch(`${BASE_URL}/api/generations`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Cookie: authCookie,
       },
       body: JSON.stringify({ source_text: sourceText }),
@@ -27,12 +27,12 @@ describe('POST /api/generations', () => {
     expect(data.error).toBeDefined();
   });
 
-  it('should reject text over 10000 chars', async () => {
-    const sourceText = 'A'.repeat(15000);
+  it("should reject text over 10000 chars", async () => {
+    const sourceText = "A".repeat(15000);
     const response = await fetch(`${BASE_URL}/api/generations`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Cookie: authCookie,
       },
       body: JSON.stringify({ source_text: sourceText }),
@@ -41,12 +41,12 @@ describe('POST /api/generations', () => {
     expect(response.status).toBe(400);
   });
 
-  it('should reject whitespace-only text', async () => {
-    const sourceText = ' '.repeat(5000);
+  it("should reject whitespace-only text", async () => {
+    const sourceText = " ".repeat(5000);
     const response = await fetch(`${BASE_URL}/api/generations`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Cookie: authCookie,
       },
       body: JSON.stringify({ source_text: sourceText }),
@@ -56,8 +56,8 @@ describe('POST /api/generations', () => {
   });
 });
 
-describe('GET /api/generations', () => {
-  it('should list generations for authenticated user', async () => {
+describe("GET /api/generations", () => {
+  it("should list generations for authenticated user", async () => {
     const response = await fetch(`${BASE_URL}/api/generations`, {
       headers: { Cookie: authCookie },
     });
@@ -69,13 +69,10 @@ describe('GET /api/generations', () => {
     expect(data.pagination).toBeDefined();
   });
 
-  it('should support pagination parameters', async () => {
-    const response = await fetch(
-      `${BASE_URL}/api/generations?page=1&limit=5`,
-      {
-        headers: { Cookie: authCookie },
-      }
-    );
+  it("should support pagination parameters", async () => {
+    const response = await fetch(`${BASE_URL}/api/generations?page=1&limit=5`, {
+      headers: { Cookie: authCookie },
+    });
 
     expect(response.status).toBe(200);
     const data = await response.json();

@@ -1,16 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import FlashcardFilters from './FlashcardFilters';
-import FlashcardsTable from './FlashcardsTable';
-import FlashcardModal from './FlashcardModal';
-import DeleteConfirmDialog from './DeleteConfirmDialog';
-import type {
-  FlashcardDTO,
-  FlashcardSortField,
-  SortOrder,
-  FlashcardSource,
-  FlashcardListResponseDTO,
-} from '@/types';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import FlashcardFilters from "./FlashcardFilters";
+import FlashcardsTable from "./FlashcardsTable";
+import FlashcardModal from "./FlashcardModal";
+import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import type { FlashcardDTO, FlashcardSortField, SortOrder, FlashcardSource, FlashcardListResponseDTO } from "@/types";
 
 export default function FlashcardsList() {
   const [flashcards, setFlashcards] = useState<FlashcardDTO[]>([]);
@@ -24,13 +18,13 @@ export default function FlashcardsList() {
   const [total, setTotal] = useState(0);
 
   // Filters
-  const [sortField, setSortField] = useState<FlashcardSortField>('created_at');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [sortField, setSortField] = useState<FlashcardSortField>("created_at");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [sourceFilter, setSourceFilter] = useState<FlashcardSource | undefined>(undefined);
 
   // Modals
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
+  const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [selectedFlashcard, setSelectedFlashcard] = useState<FlashcardDTO | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [flashcardToDelete, setFlashcardToDelete] = useState<FlashcardDTO | null>(null);
@@ -44,20 +38,20 @@ export default function FlashcardsList() {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: '20',
+        limit: "20",
         sort: sortField,
         order: sortOrder,
       });
 
       if (sourceFilter) {
-        params.append('source', sourceFilter);
+        params.append("source", sourceFilter);
       }
 
       const response = await fetch(`/api/flashcards?${params.toString()}`);
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Nie udało się pobrać fiszek');
+        throw new Error(data.message || "Nie udało się pobrać fiszek");
       }
 
       const data: FlashcardListResponseDTO = await response.json();
@@ -66,7 +60,7 @@ export default function FlashcardsList() {
       setTotalPages(data.pagination.total_pages);
       setTotal(data.pagination.total);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd');
+      setError(err instanceof Error ? err.message : "Wystąpił błąd");
     } finally {
       setIsLoading(false);
     }
@@ -88,13 +82,13 @@ export default function FlashcardsList() {
   };
 
   const handleNewFlashcard = () => {
-    setModalMode('create');
+    setModalMode("create");
     setSelectedFlashcard(null);
     setModalOpen(true);
   };
 
   const handleEditFlashcard = (flashcard: FlashcardDTO) => {
-    setModalMode('edit');
+    setModalMode("edit");
     setSelectedFlashcard(flashcard);
     setModalOpen(true);
   };
@@ -105,36 +99,36 @@ export default function FlashcardsList() {
   };
 
   const handleSaveFlashcard = async (front: string, back: string) => {
-    if (modalMode === 'create') {
-      const response = await fetch('/api/flashcards', {
-        method: 'POST',
+    if (modalMode === "create") {
+      const response = await fetch("/api/flashcards", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ front, back }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Nie udało się utworzyć fiszki');
+        throw new Error(data.message || "Nie udało się utworzyć fiszki");
       }
 
-      showSuccess('Fiszka została utworzona');
+      showSuccess("Fiszka została utworzona");
     } else if (selectedFlashcard) {
       const response = await fetch(`/api/flashcards/${selectedFlashcard.id}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ front, back }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Nie udało się zaktualizować fiszki');
+        throw new Error(data.message || "Nie udało się zaktualizować fiszki");
       }
 
-      showSuccess('Fiszka została zaktualizowana');
+      showSuccess("Fiszka została zaktualizowana");
     }
 
     await fetchFlashcards();
@@ -147,20 +141,20 @@ export default function FlashcardsList() {
 
     try {
       const response = await fetch(`/api/flashcards/${flashcardToDelete.id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Nie udało się usunąć fiszki');
+        throw new Error(data.message || "Nie udało się usunąć fiszki");
       }
 
-      showSuccess('Fiszka została usunięta');
+      showSuccess("Fiszka została usunięta");
       setDeleteDialogOpen(false);
       setFlashcardToDelete(null);
       await fetchFlashcards();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas usuwania');
+      setError(err instanceof Error ? err.message : "Wystąpił błąd podczas usuwania");
     } finally {
       setIsDeleting(false);
     }
@@ -177,17 +171,14 @@ export default function FlashcardsList() {
         <h1 className="text-3xl font-bold">Moje fiszki</h1>
         {total > 0 && (
           <p className="text-sm text-muted-foreground">
-            Łącznie: {total} {total === 1 ? 'fiszka' : 'fiszek'}
+            Łącznie: {total} {total === 1 ? "fiszka" : "fiszek"}
           </p>
         )}
       </div>
 
       {/* Success Message */}
       {successMessage && (
-        <div
-          className="p-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-md"
-          role="alert"
-        >
+        <div className="p-4 text-sm text-green-800 bg-green-50 border border-green-200 rounded-md" role="alert">
           {successMessage}
         </div>
       )}
@@ -213,19 +204,11 @@ export default function FlashcardsList() {
       />
 
       {/* Loading State */}
-      {isLoading && (
-        <div className="text-center py-12 text-muted-foreground">
-          Ładowanie...
-        </div>
-      )}
+      {isLoading && <div className="text-center py-12 text-muted-foreground">Ładowanie...</div>}
 
       {/* Table */}
       {!isLoading && (
-        <FlashcardsTable
-          flashcards={flashcards}
-          onEdit={handleEditFlashcard}
-          onDelete={handleDeleteFlashcard}
-        />
+        <FlashcardsTable flashcards={flashcards} onEdit={handleEditFlashcard} onDelete={handleDeleteFlashcard} />
       )}
 
       {/* Pagination */}

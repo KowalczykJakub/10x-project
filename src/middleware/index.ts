@@ -12,8 +12,8 @@ const PROTECTED_ROUTES = [
   "/api/generations",
 ];
 
-// Ścieżki publiczne - dostępne bez uwierzytelnienia
-const PUBLIC_ROUTES = ["/login", "/register", "/forgot-password", "/reset-password", "/api/auth"];
+// Ścieżki publiczne - dostępne bez uwierzytelnienia (reserved for future use)
+// const PUBLIC_ROUTES = ["/login", "/register", "/forgot-password", "/reset-password", "/api/auth"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { cookies, url, request, redirect, locals } = context;
@@ -30,7 +30,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Pobierz sesję użytkownika
   const {
     data: { user },
-    error,
   } = await supabase.auth.getUser();
 
   // Zapisz użytkownika i sesję w locals
@@ -50,9 +49,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // Sprawdź czy ścieżka jest chroniona
   const isProtectedRoute = PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
-
-  // Sprawdź czy ścieżka jest publiczna (auth pages)
-  const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
 
   // Jeśli chroniona ścieżka i brak użytkownika -> przekieruj do /login
   if (isProtectedRoute && !user) {

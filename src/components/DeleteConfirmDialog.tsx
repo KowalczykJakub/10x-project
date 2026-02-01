@@ -7,7 +7,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 
 interface DeleteConfirmDialogProps {
   open: boolean;
@@ -16,12 +16,7 @@ interface DeleteConfirmDialogProps {
   isDeleting?: boolean;
 }
 
-export default function DeleteConfirmDialog({
-  open,
-  onOpenChange,
-  onConfirm,
-  isDeleting,
-}: DeleteConfirmDialogProps) {
+export default function DeleteConfirmDialog({ open, onOpenChange, onConfirm, isDeleting }: DeleteConfirmDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -38,7 +33,7 @@ export default function DeleteConfirmDialog({
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isDeleting ? 'Usuwanie...' : 'Usuń'}
+            {isDeleting ? "Usuwanie..." : "Usuń"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -1,7 +1,7 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServerInstance } from '../../../db/supabase.client.ts';
-import { resetPasswordSchema } from '../../../lib/schemas/auth.schema.ts';
-import { getAuthErrorMessage } from '../../../lib/utils/auth-errors.ts';
+import type { APIRoute } from "astro";
+import { createSupabaseServerInstance } from "../../../db/supabase.client.ts";
+import { resetPasswordSchema } from "../../../lib/schemas/auth.schema.ts";
+import { getAuthErrorMessage } from "../../../lib/utils/auth-errors.ts";
 
 export const prerender = false;
 
@@ -12,17 +12,17 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     // Validate input with Zod
     const validationResult = resetPasswordSchema.safeParse(body);
-    
+
     if (!validationResult.success) {
       return new Response(
         JSON.stringify({
-          error: 'Validation Error',
-          message: 'Nieprawidłowe dane wejściowe',
+          error: "Validation Error",
+          message: "Nieprawidłowe dane wejściowe",
           details: validationResult.error.flatten().fieldErrors,
         }),
-        { 
-          status: 400, 
-          headers: { 'Content-Type': 'application/json' } 
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
@@ -30,9 +30,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const { newPassword } = validationResult.data;
 
     // Create Supabase client
-    const supabase = createSupabaseServerInstance({ 
-      cookies, 
-      headers: request.headers 
+    const supabase = createSupabaseServerInstance({
+      cookies,
+      headers: request.headers,
     });
 
     // Update user password
@@ -45,35 +45,36 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       const errorMessage = getAuthErrorMessage(error);
       return new Response(
         JSON.stringify({
-          error: 'Password Reset Error',
+          error: "Password Reset Error",
           message: errorMessage,
         }),
-        { 
-          status: 400, 
-          headers: { 'Content-Type': 'application/json' } 
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
 
     return new Response(
       JSON.stringify({
-        message: 'Hasło zostało zmienione. Możesz się teraz zalogować.',
+        message: "Hasło zostało zmienione. Możesz się teraz zalogować.",
       }),
-      { 
-        status: 200, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
       }
     );
   } catch (error) {
-    console.error('Reset password error:', error);
+    // eslint-disable-next-line no-console
+    console.error("Reset password error:", error);
     return new Response(
       JSON.stringify({
-        error: 'Internal Server Error',
-        message: 'Wystąpił błąd serwera. Spróbuj ponownie.',
+        error: "Internal Server Error",
+        message: "Wystąpił błąd serwera. Spróbuj ponownie.",
       }),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }

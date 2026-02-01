@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,15 +6,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import type { FlashcardDTO } from '@/types';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import type { FlashcardDTO } from "@/types";
 
 interface FlashcardModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
   flashcard?: FlashcardDTO | null;
   onSave: (front: string, back: string) => Promise<void>;
 }
@@ -22,26 +22,20 @@ interface FlashcardModalProps {
 const MAX_FRONT = 200;
 const MAX_BACK = 500;
 
-export default function FlashcardModal({
-  open,
-  onOpenChange,
-  mode,
-  flashcard,
-  onSave,
-}: FlashcardModalProps) {
-  const [front, setFront] = useState('');
-  const [back, setBack] = useState('');
+export default function FlashcardModal({ open, onOpenChange, mode, flashcard, onSave }: FlashcardModalProps) {
+  const [front, setFront] = useState("");
+  const [back, setBack] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
-      if (mode === 'edit' && flashcard) {
+      if (mode === "edit" && flashcard) {
         setFront(flashcard.front);
         setBack(flashcard.back);
       } else {
-        setFront('');
-        setBack('');
+        setFront("");
+        setBack("");
       }
       setError(null);
     }
@@ -49,7 +43,7 @@ export default function FlashcardModal({
 
   const handleSave = async () => {
     if (!front.trim() || !back.trim()) {
-      setError('Oba pola są wymagane');
+      setError("Oba pola są wymagane");
       return;
     }
 
@@ -70,7 +64,7 @@ export default function FlashcardModal({
       await onSave(front.trim(), back.trim());
       onOpenChange(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Nie udało się zapisać fiszki');
+      setError(err instanceof Error ? err.message : "Nie udało się zapisać fiszki");
     } finally {
       setIsSaving(false);
     }
@@ -80,13 +74,9 @@ export default function FlashcardModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>
-            {mode === 'create' ? 'Nowa fiszka' : 'Edytuj fiszkę'}
-          </DialogTitle>
+          <DialogTitle>{mode === "create" ? "Nowa fiszka" : "Edytuj fiszkę"}</DialogTitle>
           <DialogDescription>
-            {mode === 'create'
-              ? 'Stwórz nową fiszkę ręcznie'
-              : 'Edytuj treść istniejącej fiszki'}
+            {mode === "create" ? "Stwórz nową fiszkę ręcznie" : "Edytuj treść istniejącej fiszki"}
           </DialogDescription>
         </DialogHeader>
 
@@ -142,18 +132,11 @@ export default function FlashcardModal({
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isSaving}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
             Anuluj
           </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isSaving || !front.trim() || !back.trim()}
-          >
-            {isSaving ? 'Zapisywanie...' : 'Zapisz'}
+          <Button onClick={handleSave} disabled={isSaving || !front.trim() || !back.trim()}>
+            {isSaving ? "Zapisywanie..." : "Zapisz"}
           </Button>
         </DialogFooter>
       </DialogContent>

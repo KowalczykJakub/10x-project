@@ -1,14 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import ProposalRow from './ProposalRow';
-import type { FlashcardProposalDTO } from '@/types';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import ProposalRow from "./ProposalRow";
+import type { FlashcardProposalDTO } from "@/types";
 
 interface ProposalsListProps {
   proposals: FlashcardProposalDTO[];
@@ -21,11 +15,7 @@ interface EditableProposal extends FlashcardProposalDTO {
   edited: boolean;
 }
 
-export default function ProposalsList({
-  proposals,
-  generationId,
-  onSaveComplete,
-}: ProposalsListProps) {
+export default function ProposalsList({ proposals, generationId, onSaveComplete }: ProposalsListProps) {
   const [editableProposals, setEditableProposals] = useState<EditableProposal[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isSaving, setIsSaving] = useState(false);
@@ -39,9 +29,9 @@ export default function ProposalsList({
       edited: false,
     }));
     setEditableProposals(initialized);
-    
+
     // Select all by default
-    const allIds = new Set(initialized.map(p => p.id));
+    const allIds = new Set(initialized.map((p) => p.id));
     setSelectedIds(allIds);
   }, [proposals]);
 
@@ -50,12 +40,12 @@ export default function ProposalsList({
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (editableProposals.length > 0) {
         e.preventDefault();
-        e.returnValue = '';
+        e.returnValue = "";
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [editableProposals]);
 
   const handleToggleSelect = (id: string) => {
@@ -71,11 +61,7 @@ export default function ProposalsList({
   };
 
   const handleUpdateProposal = (id: string, front: string, back: string) => {
-    setEditableProposals((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, front, back, edited: true } : p
-      )
-    );
+    setEditableProposals((prev) => prev.map((p) => (p.id === id ? { ...p, front, back, edited: true } : p)));
   };
 
   const handleSaveSelected = async () => {
@@ -88,7 +74,7 @@ export default function ProposalsList({
       }));
 
     if (selectedProposals.length === 0) {
-      setError('Wybierz przynajmniej jedną fiszkę do zapisania');
+      setError("Wybierz przynajmniej jedną fiszkę do zapisania");
       return;
     }
 
@@ -96,10 +82,10 @@ export default function ProposalsList({
     setError(null);
 
     try {
-      const response = await fetch('/api/flashcards/batch', {
-        method: 'POST',
+      const response = await fetch("/api/flashcards/batch", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           generation_id: generationId,
@@ -109,13 +95,13 @@ export default function ProposalsList({
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Nie udało się zapisać fiszek');
+        throw new Error(data.message || "Nie udało się zapisać fiszek");
       }
 
       // Success - call callback to show success message and clear proposals
       onSaveComplete();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas zapisywania');
+      setError(err instanceof Error ? err.message : "Wystąpił błąd podczas zapisywania");
     } finally {
       setIsSaving(false);
     }
@@ -163,9 +149,7 @@ export default function ProposalsList({
                 index={index}
                 isSelected={selectedIds.has(proposal.id)}
                 onToggleSelect={() => handleToggleSelect(proposal.id)}
-                onUpdate={(front, back) =>
-                  handleUpdateProposal(proposal.id, front, back)
-                }
+                onUpdate={(front, back) => handleUpdateProposal(proposal.id, front, back)}
               />
             ))}
           </TableBody>
@@ -173,14 +157,8 @@ export default function ProposalsList({
       </div>
 
       <div className="flex justify-end">
-        <Button
-          onClick={handleSaveSelected}
-          disabled={isSaving || selectedIds.size === 0}
-          size="lg"
-        >
-          {isSaving
-            ? 'Zapisywanie...'
-            : `Zapisz wybrane fiszki (${selectedIds.size})`}
+        <Button onClick={handleSaveSelected} disabled={isSaving || selectedIds.size === 0} size="lg">
+          {isSaving ? "Zapisywanie..." : `Zapisz wybrane fiszki (${selectedIds.size})`}
         </Button>
       </div>
     </div>

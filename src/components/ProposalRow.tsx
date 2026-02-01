@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { TableCell, TableRow } from '@/components/ui/table';
-import type { FlashcardProposalDTO } from '@/types';
+import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { TableCell, TableRow } from "@/components/ui/table";
+import type { FlashcardProposalDTO } from "@/types";
 
 interface ProposalRowProps {
   proposal: FlashcardProposalDTO;
@@ -16,13 +16,7 @@ interface ProposalRowProps {
 const MAX_FRONT = 200;
 const MAX_BACK = 500;
 
-export default function ProposalRow({
-  proposal,
-  index,
-  isSelected,
-  onToggleSelect,
-  onUpdate,
-}: ProposalRowProps) {
+export default function ProposalRow({ proposal, index, isSelected, onToggleSelect, onUpdate }: ProposalRowProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editFront, setEditFront] = useState(proposal.front);
   const [editBack, setEditBack] = useState(proposal.back);
@@ -42,18 +36,14 @@ export default function ProposalRow({
 
   const truncate = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
+    return text.substring(0, maxLength) + "...";
   };
 
   if (isEditing) {
     return (
       <TableRow>
         <TableCell>
-          <Checkbox
-            checked={isSelected}
-            onCheckedChange={onToggleSelect}
-            aria-label={`Zaznacz fiszkę ${index + 1}`}
-          />
+          <Checkbox checked={isSelected} onCheckedChange={onToggleSelect} aria-label={`Zaznacz fiszkę ${index + 1}`} />
         </TableCell>
         <TableCell>
           <div className="space-y-1">
@@ -85,11 +75,7 @@ export default function ProposalRow({
         </TableCell>
         <TableCell>
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              onClick={handleSave}
-              disabled={!editFront.trim() || !editBack.trim()}
-            >
+            <Button size="sm" onClick={handleSave} disabled={!editFront.trim() || !editBack.trim()}>
               Zapisz
             </Button>
             <Button size="sm" variant="outline" onClick={handleCancel}>
@@ -104,28 +90,16 @@ export default function ProposalRow({
   return (
     <TableRow>
       <TableCell>
-        <Checkbox
-          checked={isSelected}
-          onCheckedChange={onToggleSelect}
-          aria-label={`Zaznacz fiszkę ${index + 1}`}
-        />
+        <Checkbox checked={isSelected} onCheckedChange={onToggleSelect} aria-label={`Zaznacz fiszkę ${index + 1}`} />
       </TableCell>
       <TableCell className="max-w-xs">
-        <p className="whitespace-pre-wrap break-words">
-          {truncate(proposal.front, 100)}
-        </p>
+        <p className="whitespace-pre-wrap break-words">{truncate(proposal.front, 100)}</p>
       </TableCell>
       <TableCell className="max-w-xs">
-        <p className="whitespace-pre-wrap break-words">
-          {truncate(proposal.back, 100)}
-        </p>
+        <p className="whitespace-pre-wrap break-words">{truncate(proposal.back, 100)}</p>
       </TableCell>
       <TableCell>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => setIsEditing(true)}
-        >
+        <Button size="sm" variant="outline" onClick={() => setIsEditing(true)}>
           Edytuj
         </Button>
       </TableCell>

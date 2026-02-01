@@ -1,14 +1,14 @@
 /**
  * Toast notification helpers using Sonner
- * 
+ *
  * Usage:
  * import { showSuccess, showError, showInfo } from '@/lib/toast';
- * 
+ *
  * showSuccess('Fiszka została zapisana');
  * showError('Nie udało się zapisać fiszki');
  */
 
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 export const showSuccess = (message: string) => {
   toast.success(message, {

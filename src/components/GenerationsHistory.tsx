@@ -1,12 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import StatsSummary from './StatsSummary';
-import GenerationsTable from './GenerationsTable';
-import type {
-  GenerationDTO,
-  GenerationStatisticsDTO,
-  GenerationListResponseDTO,
-} from '@/types';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import StatsSummary from "./StatsSummary";
+import GenerationsTable from "./GenerationsTable";
+import type { GenerationDTO, GenerationStatisticsDTO, GenerationListResponseDTO } from "@/types";
 
 export default function GenerationsHistory() {
   const [generations, setGenerations] = useState<GenerationDTO[]>([]);
@@ -29,16 +25,16 @@ export default function GenerationsHistory() {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: '20',
-        sort: 'created_at',
-        order: 'desc',
+        limit: "20",
+        sort: "created_at",
+        order: "desc",
       });
 
       const response = await fetch(`/api/generations?${params.toString()}`);
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || 'Nie udało się pobrać historii');
+        throw new Error(data.message || "Nie udało się pobrać historii");
       }
 
       const data: GenerationListResponseDTO = await response.json();
@@ -47,7 +43,7 @@ export default function GenerationsHistory() {
       setCurrentPage(data.pagination.page);
       setTotalPages(data.pagination.total_pages);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd');
+      setError(err instanceof Error ? err.message : "Wystąpił błąd");
     } finally {
       setIsLoading(false);
     }
@@ -57,9 +53,7 @@ export default function GenerationsHistory() {
     return (
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">Historia generowań</h1>
-        <div className="text-center py-12 text-muted-foreground">
-          Ładowanie historii...
-        </div>
+        <div className="text-center py-12 text-muted-foreground">Ładowanie historii...</div>
       </div>
     );
   }
@@ -83,9 +77,7 @@ export default function GenerationsHistory() {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">Historia generowań</h1>
         <div className="text-center py-12 space-y-4">
-          <p className="text-lg text-muted-foreground">
-            Nie wygenerowałeś jeszcze żadnych fiszek
-          </p>
+          <p className="text-lg text-muted-foreground">Nie wygenerowałeś jeszcze żadnych fiszek</p>
           <Button asChild>
             <a href="/generate">Wygeneruj teraz</a>
           </Button>

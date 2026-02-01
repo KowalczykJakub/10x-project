@@ -1,21 +1,16 @@
-import type { APIRoute } from 'astro';
-import type { 
-  FlashcardDTO,
-  FlashcardListResponseDTO,
-  CreateFlashcardDTO,
-  ErrorResponseDTO 
-} from '@/types';
+import type { APIRoute } from "astro";
+import type { FlashcardDTO, FlashcardListResponseDTO, CreateFlashcardDTO, ErrorResponseDTO } from "@/types";
 
 export const prerender = false;
 
 // Mock flashcards store (in-memory for development)
 // In production, this would be replaced with database queries
-let mockFlashcards: FlashcardDTO[] = [];
+const mockFlashcards: FlashcardDTO[] = [];
 
 /**
  * GET /api/flashcards
  * List flashcards with pagination, sorting, and filtering
- * 
+ *
  * MOCK VERSION: Returns empty list initially
  * TODO: Add database integration when ready
  */
@@ -25,24 +20,24 @@ export const GET: APIRoute = async ({ url, locals }) => {
   // Check authentication
   if (!user) {
     const errorResponse: ErrorResponseDTO = {
-      error: 'Unauthorized',
-      message: 'Musisz być zalogowany',
+      error: "Unauthorized",
+      message: "Musisz być zalogowany",
     };
     return new Response(JSON.stringify(errorResponse), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
   const searchParams = url.searchParams;
-  
+
   // Parse query parameters
-  const page = parseInt(searchParams.get('page') || '1');
-  const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100);
-  const sort = searchParams.get('sort') || 'created_at';
-  const order = searchParams.get('order') || 'desc';
-  const source = searchParams.get('source');
-  const search = searchParams.get('search');
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
+  const sort = searchParams.get("sort") || "created_at";
+  const order = searchParams.get("order") || "desc";
+  const source = searchParams.get("source");
+  const search = searchParams.get("search");
 
   try {
     // TODO: Filter by user.id when database is integrated
@@ -54,24 +49,24 @@ export const GET: APIRoute = async ({ url, locals }) => {
     let filtered = [...mockFlashcards];
 
     // Filter by source
-    if (source && source !== 'all') {
-      filtered = filtered.filter(f => f.source === source);
+    if (source && source !== "all") {
+      filtered = filtered.filter((f) => f.source === source);
     }
 
     // Search in front/back
     if (search && search.trim()) {
       const searchLower = search.toLowerCase();
-      filtered = filtered.filter(f => 
-        f.front.toLowerCase().includes(searchLower) ||
-        f.back.toLowerCase().includes(searchLower)
+      filtered = filtered.filter(
+        (f) => f.front.toLowerCase().includes(searchLower) || f.back.toLowerCase().includes(searchLower)
       );
     }
 
     // Sort
     filtered.sort((a, b) => {
-      let aVal: any, bVal: any;
-      
-      if (sort === 'front') {
+      let aVal: string | number;
+      let bVal: string | number;
+
+      if (sort === "front") {
         aVal = a.front.toLowerCase();
         bVal = b.front.toLowerCase();
       } else {
@@ -79,7 +74,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
         bVal = new Date(b[sort as keyof FlashcardDTO] as string).getTime();
       }
 
-      if (order === 'asc') {
+      if (order === "asc") {
         return aVal > bVal ? 1 : -1;
       } else {
         return aVal < bVal ? 1 : -1;
@@ -102,28 +97,26 @@ export const GET: APIRoute = async ({ url, locals }) => {
       },
     };
 
-    return new Response(
-      JSON.stringify(response),
-      {
-        status: 200,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        }
-      }
-    );
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
   } catch (error) {
-    console.error('List flashcards error:', error);
-    
+    // eslint-disable-next-line no-console
+    console.error("List flashcards error:", error);
+
     return new Response(
       JSON.stringify({
-        error: 'Internal Server Error',
-        message: 'Failed to retrieve flashcards',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: "Internal Server Error",
+        message: "Failed to retrieve flashcards",
+        details: error instanceof Error ? error.message : "Unknown error",
       } as ErrorResponseDTO),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -132,7 +125,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
 /**
  * POST /api/flashcards
  * Create a single flashcard manually
- * 
+ *
  * MOCK VERSION: Stores in memory
  * TODO: Add database integration when ready
  */
@@ -142,12 +135,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // Check authentication
   if (!user) {
     const errorResponse: ErrorResponseDTO = {
-      error: 'Unauthorized',
-      message: 'Musisz być zalogowany',
+      error: "Unauthorized",
+      message: "Musisz być zalogowany",
     };
     return new Response(JSON.stringify(errorResponse), {
       status: 401,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
@@ -157,12 +150,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
   } catch {
     return new Response(
       JSON.stringify({
-        error: 'Bad Request',
-        message: 'Invalid JSON in request body'
+        error: "Bad Request",
+        message: "Invalid JSON in request body",
       } as ErrorResponseDTO),
-      { 
-        status: 400, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -171,12 +164,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!body.front || !body.back) {
     return new Response(
       JSON.stringify({
-        error: 'Validation Error',
-        message: 'Both front and back fields are required'
+        error: "Validation Error",
+        message: "Both front and back fields are required",
       } as ErrorResponseDTO),
-      { 
-        status: 400, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -184,12 +177,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (body.front.length > 200 || body.back.length > 500) {
     return new Response(
       JSON.stringify({
-        error: 'Validation Error',
-        message: 'Front must be ≤200 chars, back must be ≤500 chars'
+        error: "Validation Error",
+        message: "Front must be ≤200 chars, back must be ≤500 chars",
       } as ErrorResponseDTO),
-      { 
-        status: 400, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
@@ -200,7 +193,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       id: Date.now(),
       front: body.front.trim(),
       back: body.back.trim(),
-      source: 'manual',
+      source: "manual",
       generation_id: null,
       created_at: now,
       updated_at: now,
@@ -208,28 +201,26 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     mockFlashcards.push(newFlashcard);
 
-    return new Response(
-      JSON.stringify(newFlashcard),
-      {
-        status: 201,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        }
-      }
-    );
+    return new Response(JSON.stringify(newFlashcard), {
+      status: 201,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
   } catch (error) {
-    console.error('Create flashcard error:', error);
-    
+    // eslint-disable-next-line no-console
+    console.error("Create flashcard error:", error);
+
     return new Response(
       JSON.stringify({
-        error: 'Internal Server Error',
-        message: 'Failed to create flashcard',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: "Internal Server Error",
+        message: "Failed to create flashcard",
+        details: error instanceof Error ? error.message : "Unknown error",
       } as ErrorResponseDTO),
-      { 
-        status: 500, 
-        headers: { 'Content-Type': 'application/json' } 
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
     );
   }

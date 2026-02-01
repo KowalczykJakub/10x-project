@@ -1,14 +1,9 @@
-import type { 
-  GenerationDTO, 
-  FlashcardProposalDTO,
-  CreateGenerationResponseDTO,
-  GenerationErrorLogInsertDTO
-} from '@/types';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@/db/database.types';
-import { OpenRouterService } from './openrouter.service';
-import { OpenRouterErrorFactory } from '../errors/openrouter.errors';
-import { sha256Hash } from '../utils/crypto';
+import type { GenerationDTO, CreateGenerationResponseDTO, GenerationErrorLogInsertDTO } from "@/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/db/database.types";
+import { OpenRouterService } from "./openrouter.service";
+import { OpenRouterErrorFactory } from "../errors/openrouter.errors";
+import { sha256Hash } from "../utils/crypto";
 
 /**
  * Service for orchestrating flashcard generation workflow
@@ -20,13 +15,13 @@ export class GenerationService {
 
   /**
    * Create a new GenerationService
-   * 
+   *
    * @param apiKey - OpenRouter API key
    * @param supabase - Optional Supabase client for database operations
    */
   constructor(apiKey: string, supabase?: SupabaseClient<Database>) {
     this.openRouterService = new OpenRouterService(apiKey, {
-      defaultModel: 'anthropic/claude-3.5-sonnet',
+      defaultModel: "anthropic/claude-3.5-sonnet",
       timeout: 30000,
       retryAttempts: 2,
     });
@@ -35,7 +30,7 @@ export class GenerationService {
 
   /**
    * Generate flashcards from source text
-   * 
+   *
    * @param sourceText - The text to generate flashcards from
    * @param userId - Optional user ID (required for database persistence)
    * @param model - The LLM model to use
@@ -45,30 +40,27 @@ export class GenerationService {
   async generateFlashcards(
     sourceText: string,
     userId?: string,
-    model: string = 'anthropic/claude-3.5-sonnet'
+    model = "anthropic/claude-3.5-sonnet"
   ): Promise<CreateGenerationResponseDTO> {
     const startTime = performance.now();
-    
+
     // Hash source text for tracking and deduplication
     const sourceTextHash = await sha256Hash(sourceText);
-    
+
     try {
       // Generate flashcards using OpenRouter
-      const proposals = await this.openRouterService.generateFlashcards(
-        sourceText,
-        model
-      );
-      
+      const proposals = await this.openRouterService.generateFlashcards(sourceText, model);
+
       // Calculate duration
       const endTime = performance.now();
       const duration = Math.round(endTime - startTime);
-      
+
       // Create generation record in database (if supabase client and userId provided)
       let generation: GenerationDTO;
-      
+
       if (this.supabase && userId) {
         const { data, error } = await this.supabase
-          .from('generations')
+          .from("generations")
           .insert({
             user_id: userId,
             model: model,
@@ -81,12 +73,13 @@ export class GenerationService {
           })
           .select()
           .single();
-        
+
         if (error) {
-          console.error('Failed to create generation record:', error);
+          // eslint-disable-next-line no-console
+          console.error("Failed to create generation record:", error);
           throw new Error(`Failed to create generation record: ${error.message}`);
         }
-        
+
         generation = {
           id: data.id,
           model: data.model,
@@ -110,27 +103,21 @@ export class GenerationService {
           created_at: new Date().toISOString(),
         };
       }
-      
+
       return {
         generation,
         proposals,
       };
-      
     } catch (error) {
       // Log error to database if available
       if (this.supabase && userId) {
-        await this.logGenerationError(
-          userId,
-          model,
-          sourceTextHash,
-          sourceText.length,
-          error
-        ).catch(logError => {
+        await this.logGenerationError(userId, model, sourceTextHash, sourceText.length, error).catch((logError) => {
           // Don't throw if logging fails, just log to console
-          console.error('Failed to log generation error:', logError);
+          // eslint-disable-next-line no-console
+          console.error("Failed to log generation error:", logError);
         });
       }
-      
+
       // Re-throw the original error
       throw error;
     }
@@ -138,7 +125,7 @@ export class GenerationService {
 
   /**
    * Log generation error to database
-   * 
+   *
    * @param userId - User ID
    * @param model - Model name
    * @param sourceTextHash - Hash of source text
@@ -153,12 +140,10 @@ export class GenerationService {
     error: unknown
   ): Promise<void> {
     if (!this.supabase) return;
-    
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    const errorCode = OpenRouterErrorFactory.isOpenRouterError(error) 
-      ? error.code 
-      : 'UNKNOWN_ERROR';
-    
+
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorCode = OpenRouterErrorFactory.isOpenRouterError(error) ? error.code : "UNKNOWN_ERROR";
+
     const errorLog: GenerationErrorLogInsertDTO = {
       user_id: userId,
       model: model,
@@ -167,13 +152,12 @@ export class GenerationService {
       error_code: errorCode,
       error_message: errorMessage,
     };
-    
-    const { error: insertError } = await this.supabase
-      .from('generation_error_logs')
-      .insert(errorLog);
-    
+
+    const { error: insertError } = await this.supabase.from("generation_error_logs").insert(errorLog);
+
     if (insertError) {
-      console.error('Failed to insert error log:', insertError);
+      // eslint-disable-next-line no-console
+      console.error("Failed to insert error log:", insertError);
     }
   }
 }
