@@ -13,8 +13,8 @@ export interface TestUser {
 
 // Shared test user to avoid rate limiting in production
 const SHARED_TEST_USER = {
-  email: `ci-test-user@example.com`,
-  password: "Test123!@#SecurePassword",
+  email: `test-user@gmail.com`,
+  password: "Test1234",
 };
 
 /**

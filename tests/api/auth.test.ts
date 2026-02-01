@@ -73,9 +73,9 @@ describe("POST /api/auth/register", () => {
 describe("POST /api/auth/login", () => {
   // Use shared test user in CI, unique user in local dev
   const testEmail = IS_CI
-    ? "ci-test-user@example.com"
+    ? "test-user@gmail.com"
     : `login-test-${Date.now()}-${Math.random().toString(36).substring(7)}@test.com`;
-  const testPassword = IS_CI ? "Test123!@#SecurePassword" : "Test123!@";
+  const testPassword = IS_CI ? "Test1234" : "Test123!@";
 
   beforeAll(async () => {
     // Create test user only in local dev (CI uses shared user from global setup)

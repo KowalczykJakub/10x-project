@@ -6,8 +6,8 @@
 const BASE_URL = "http://localhost:3000";
 
 export const SHARED_TEST_USER = {
-  email: `ci-test-user@example.com`,
-  password: "Test123!@#SecurePassword",
+  email: `test-user@gmail.com`,
+  password: "Test1234",
 };
 
 export async function setup() {
