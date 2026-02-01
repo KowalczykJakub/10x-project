@@ -27,6 +27,8 @@ Dashboard → Settings → API → Project API keys → **anon** / **public**
 
 Skopiuj cały token (rozpoczyna się od `eyJ`, ma ~200+ znaków)
 
+⚠️ **UWAGA**: W GitHub dodaj jako `SUPABASE_ANON_KEY`, ale workflow automatycznie mapuje to na `SUPABASE_KEY` używaną przez aplikację.
+
 ---
 
 ### 3. SUPABASE_SERVICE_ROLE_KEY
