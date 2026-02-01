@@ -19,6 +19,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:all": "npm run test:unit && npm run test:e2e",
     "test:db": "node scripts/test-db-connection.js",
+    "test:api:ci": "bash scripts/test-api-with-server.sh",
     "db:status": "supabase db remote status",
     "db:push": "supabase db push",
     "db:pull": "supabase db pull"
