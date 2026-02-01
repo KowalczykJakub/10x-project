@@ -17,7 +17,21 @@ export const prerender = false;
  * MOCK VERSION: Returns success without database integration
  * TODO: Add database integration when ready
  */
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+  const { user } = locals;
+
+  // Check authentication
+  if (!user) {
+    const errorResponse: ErrorResponseDTO = {
+      error: 'Unauthorized',
+      message: 'Musisz być zalogowany',
+    };
+    return new Response(JSON.stringify(errorResponse), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   // Parse request body
   let body: BatchCreateFlashcardsDTO;
   try {

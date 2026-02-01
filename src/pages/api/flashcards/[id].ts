@@ -16,7 +16,21 @@ export const prerender = false;
  * MOCK VERSION: Updates in-memory store
  * TODO: Add database integration when ready
  */
-export const PATCH: APIRoute = async ({ params, request }) => {
+export const PATCH: APIRoute = async ({ params, request, locals }) => {
+  const { user } = locals;
+
+  // Check authentication
+  if (!user) {
+    const errorResponse: ErrorResponseDTO = {
+      error: 'Unauthorized',
+      message: 'Musisz być zalogowany',
+    };
+    return new Response(JSON.stringify(errorResponse), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   const id = parseInt(params.id || '0');
   
   if (!id) {
@@ -138,7 +152,21 @@ export const PATCH: APIRoute = async ({ params, request }) => {
  * MOCK VERSION: Removes from in-memory store
  * TODO: Add database integration when ready
  */
-export const DELETE: APIRoute = async ({ params }) => {
+export const DELETE: APIRoute = async ({ params, locals }) => {
+  const { user } = locals;
+
+  // Check authentication
+  if (!user) {
+    const errorResponse: ErrorResponseDTO = {
+      error: 'Unauthorized',
+      message: 'Musisz być zalogowany',
+    };
+    return new Response(JSON.stringify(errorResponse), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   const id = parseInt(params.id || '0');
   
   if (!id) {

@@ -1,0 +1,106 @@
+---
+description: E2E testing with Playwright
+globs:
+alwaysApply: false
+---
+
+## TESTING
+
+### Test User Credentials
+
+The e2e tests use a pre-configured test user in Supabase:
+
+- **User ID**: `426b7f98-5042-468c-ba13-41b2580fcc50`
+- **Email**: `test-user@gmail.com`
+- **Password**: `Test1234`
+
+This user should be maintained in the Supabase database for testing purposes.
+
+### Test Structure
+
+All e2e tests are located in `tests/e2e/` directory:
+
+- `auth.spec.ts` - Authentication flow tests (login, logout, validation)
+- `flashcards.spec.ts` - Flashcard management tests (CRUD operations, filtering, search)
+- `generate.spec.ts` - Flashcard generation tests (AI generation, proposals)
+- `study.spec.ts` - Study session tests (flashcard review, rating)
+- `profile.spec.ts` - Profile page tests
+- `history.spec.ts` - Generation history tests
+- `navigation.spec.ts` - Application navigation and routing tests
+- `utils.ts` - Shared test utilities and helpers
+
+### Test Utilities
+
+The `utils.ts` file provides helper functions:
+
+- `loginAsTestUser(page)` - Login with the test user
+- `logout(page)` - Logout from the application
+- `cleanupFlashcards(page)` - Delete all flashcards for test user
+- `createFlashcard(page, front, back)` - Create a flashcard
+- `waitForElement(page, testId)` - Wait for element by data-testid
+
+### Guidelines for E2E
+
+#### PLAYWRIGHT
+
+- Initialize configuration only with Chromium/Desktop Chrome browser
+- Use browser contexts for isolating test environments
+- Implement the Page Object Model for maintainable tests in ./e2e/page-objects
+- Use `data-testid` attributes when introducing resilient test-oriented selectors
+- When following `data-testid` convention, locate elements by `await page.getByTestId('selectorName')`
+- Leverage API testing for backend validation
+- Implement visual comparison with expect(page).toHaveScreenshot()
+- Use the codegen tool for test recording
+- Leverage trace viewer for debugging test failures
+- Implement test hooks for setup and teardown
+- Use expect assertions with specific matchers
+- Leverage parallel execution for faster test runs
+- Follow 'Arrange', 'Act', 'Assert' approach to test structure for simplicity and readability
+- Use the shared test user instead of creating new users for each test
+- Clean up test data in beforeEach/afterEach hooks to ensure test isolation
+
+### Timeouts
+
+Tests have optimized timeouts to avoid long waits:
+
+- **Default test timeout**: 30 seconds per test
+- **Action timeout**: 10 seconds for user actions
+- **Navigation timeout**: 10 seconds for page loads
+- **AI generation tests**: 60 seconds (these tests are marked explicitly)
+
+Tests that require AI generation (OpenRouter API) have extended timeouts since the generation process takes longer.
+
+### Running Tests
+
+```bash
+# Run all e2e tests
+npm run test:e2e
+
+# Run tests in UI mode (interactive)
+npm run test:e2e:ui
+
+# Run tests in headed mode (see browser)
+npm run test:e2e:headed
+
+# Run specific test file
+npx playwright test tests/e2e/auth.spec.ts
+
+# Run tests with specific browser
+npx playwright test --project=chromium
+
+# Run tests without AI generation (faster)
+npx playwright test --grep-invert "generate flashcards from text|select and save proposals|deselect proposals|generation history"
+```
+
+### Debugging Tests
+
+```bash
+# Generate test code using codegen
+npx playwright codegen http://localhost:3000
+
+# View test trace
+npx playwright show-trace trace.zip
+
+# Debug specific test
+npx playwright test --debug tests/e2e/auth.spec.ts
+```

@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 interface SidebarProps {
   currentPath: string;
+  userEmail: string;
 }
 
 interface NavItem {
@@ -19,9 +22,10 @@ const navItems: NavItem[] = [
   { icon: '👤', label: 'Profil', href: '/profile' },
 ];
 
-export default function Sidebar({ currentPath }: SidebarProps) {
+export default function Sidebar({ currentPath, userEmail }: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
@@ -32,6 +36,31 @@ export default function Sidebar({ currentPath }: SidebarProps) {
   };
 
   const isActive = (href: string) => currentPath === href;
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Nie udało się wylogować');
+      }
+
+      toast.success('Wylogowano pomyślnie');
+      
+      // Redirect to login page
+      window.location.href = '/login';
+    } catch (error) {
+      toast.error('Wystąpił błąd podczas wylogowania');
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <>
@@ -108,6 +137,33 @@ export default function Sidebar({ currentPath }: SidebarProps) {
             ))}
           </ul>
         </nav>
+
+        {/* User section */}
+        <div className="border-t p-4 mt-auto">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-sm font-semibold">
+                {userEmail ? userEmail[0].toUpperCase() : '?'}
+              </span>
+            </div>
+            {isExpanded && (
+              <div className="text-sm overflow-hidden flex-1 min-w-0">
+                <p className="truncate font-medium">{userEmail}</p>
+              </div>
+            )}
+          </div>
+          {isExpanded && (
+            <Button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              variant="outline"
+              size="sm"
+              className="w-full"
+            >
+              {isLoggingOut ? 'Wylogowywanie...' : 'Wyloguj się'}
+            </Button>
+          )}
+        </div>
       </aside>
     </>
   );

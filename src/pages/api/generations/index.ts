@@ -21,7 +21,21 @@ let mockGenerations: GenerationDTO[] = [];
  * MOCK VERSION: Returns stored generations
  * TODO: Replace with database queries when authentication is implemented
  */
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
+  const { user } = locals;
+
+  // Check authentication
+  if (!user) {
+    const errorResponse: ErrorResponseDTO = {
+      error: 'Unauthorized',
+      message: 'Musisz być zalogowany',
+    };
+    return new Response(JSON.stringify(errorResponse), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   const searchParams = url.searchParams;
   
   // Parse query parameters
@@ -31,6 +45,11 @@ export const GET: APIRoute = async ({ url }) => {
   const order = searchParams.get('order') || 'desc';
 
   try {
+    // TODO: Filter by user.id when database is integrated
+    // const { data, error } = await supabase
+    //   .from('generations')
+    //   .select('*')
+    //   .eq('user_id', user.id);
     // Sort
     const sorted = [...mockGenerations].sort((a, b) => {
       const aVal = new Date(a[sort as keyof GenerationDTO] as string).getTime();
@@ -107,6 +126,20 @@ export const GET: APIRoute = async ({ url }) => {
  * Real implementation with OpenRouter API integration
  */
 export const POST: APIRoute = async ({ request, locals }) => {
+  const { user } = locals;
+
+  // Check authentication
+  if (!user) {
+    const errorResponse: ErrorResponseDTO = {
+      error: 'Unauthorized',
+      message: 'Musisz być zalogowany',
+    };
+    return new Response(JSON.stringify(errorResponse), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   // Parse request body
   let body;
   try {

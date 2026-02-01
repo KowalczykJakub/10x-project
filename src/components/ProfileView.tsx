@@ -1,10 +1,112 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { supabaseBrowser } from '@/db/supabase-browser';
+
+interface UserProfile {
+  email: string;
+  createdAt: string;
+  emailVerified: boolean;
+}
 
 export default function ProfileView() {
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const { data: { user }, error } = await supabaseBrowser.auth.getUser();
+        
+        if (error || !user) {
+          console.error('Failed to fetch user:', error);
+          return;
+        }
+
+        setProfile({
+          email: user.email || '',
+          createdAt: user.created_at || '',
+          emailVerified: !!user.email_confirmed_at,
+        });
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
+        <h1 className="text-3xl font-bold">Profil</h1>
+        <Card>
+          <CardContent className="pt-6 text-center">
+            <div className="flex justify-center mb-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+            <p className="text-sm text-muted-foreground">Ładowanie profilu...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold">Informacje</h1>
+      <h1 className="text-3xl font-bold">Profil</h1>
 
+      {/* User Account Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Informacje o koncie</CardTitle>
+          <CardDescription>
+            Twoje dane użytkownika
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-muted-foreground">Email</label>
+            <p className="text-base">{profile?.email || 'Brak danych'}</p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-muted-foreground">Status weryfikacji</label>
+            <div className="flex items-center gap-2">
+              {profile?.emailVerified ? (
+                <>
+                  <span className="text-green-600">✓</span>
+                  <p className="text-base">Email zweryfikowany</p>
+                </>
+              ) : (
+                <>
+                  <span className="text-yellow-600">⚠</span>
+                  <p className="text-base">Email niezweryfikowany</p>
+                  <p className="text-sm text-muted-foreground">
+                    (Sprawdź swoją skrzynkę email)
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-muted-foreground">Data utworzenia konta</label>
+            <p className="text-base">
+              {profile?.createdAt 
+                ? new Date(profile.createdAt).toLocaleDateString('pl-PL', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })
+                : 'Brak danych'}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* About the App */}
       <Card>
         <CardHeader>
           <CardTitle>O aplikacji</CardTitle>
@@ -30,27 +132,9 @@ export default function ProfileView() {
               <li>📚 <strong>Zarządzanie</strong> - Edycja, filtrowanie, sortowanie</li>
               <li>🎓 <strong>Sesja nauki</strong> - Immersyjny tryb z oceną trudności</li>
               <li>📊 <strong>Historia</strong> - Statystyki skuteczności generowania</li>
+              <li>🔐 <strong>Bezpieczeństwo</strong> - Twoje dane są prywatne i chronione</li>
             </ul>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Wersja MVP</CardTitle>
-          <CardDescription>
-            Aktualna wersja to MVP (Minimum Viable Product)
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm text-muted-foreground">
-          <p>
-            Aplikacja działa lokalnie bez wymagania logowania.
-            Wszystkie dane są przechowywane w przeglądarce.
-          </p>
-          <p className="pt-4">
-            💡 <strong>W przyszłości:</strong> Autentykacja, chmura, 
-            eksport do Anki, współdzielenie zestawów i więcej!
-          </p>
         </CardContent>
       </Card>
     </div>

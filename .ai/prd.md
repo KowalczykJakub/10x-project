@@ -122,6 +122,25 @@ Kryteria akceptacji:
 - Tylko zalogowany użytkownik może wyświetlać, edytować i usuwać swoje fiszki.
 - Nie ma dostępu do fiszek innych użytkowników ani możliwości współdzielenia.
 
+ID: US-010
+Tytuł: Wylogowanie z systemu
+Opis: Jako zalogowany użytkownik chcę móc się wylogować z aplikacji, aby zakończyć sesję.
+Kryteria akceptacji:
+- Przycisk wylogowania jest widoczny w prawym górnym rogu aplikacji gdy użytkownik jest zalogowany.
+- Po kliknięciu przycisku wylogowania sesja użytkownika zostaje zakończona.
+- Użytkownik zostaje przekierowany na stronę logowania.
+- Po wylogowaniu użytkownik nie ma dostępu do chronionych zasobów.
+
+ID: US-011
+Tytuł: Odzyskiwanie hasła
+Opis: Jako użytkownik, który zapomniał hasła, chcę móc zresetować swoje hasło przez e-mail.
+Kryteria akceptacji:
+- Na stronie logowania znajduje się link "Zapomniałeś hasła?".
+- Po kliknięciu użytkownik podaje adres e-mail.
+- System wysyła e-mail z linkiem do resetowania hasła.
+- Po kliknięciu linku użytkownik ustawia nowe hasło.
+- Link do resetowania może być użyty tylko raz.
+
 ## 6. Metryki sukcesu
 1. Efektywność generowania fiszek:
    - 75% wygenerowanych przez AI fiszek jest akceptowanych przez użytkownika.

@@ -19,7 +19,21 @@ let mockFlashcards: FlashcardDTO[] = [];
  * MOCK VERSION: Returns empty list initially
  * TODO: Add database integration when ready
  */
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
+  const { user } = locals;
+
+  // Check authentication
+  if (!user) {
+    const errorResponse: ErrorResponseDTO = {
+      error: 'Unauthorized',
+      message: 'Musisz być zalogowany',
+    };
+    return new Response(JSON.stringify(errorResponse), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   const searchParams = url.searchParams;
   
   // Parse query parameters
@@ -31,6 +45,11 @@ export const GET: APIRoute = async ({ url }) => {
   const search = searchParams.get('search');
 
   try {
+    // TODO: Filter by user.id when database is integrated
+    // const { data, error } = await supabase
+    //   .from('flashcards')
+    //   .select('*')
+    //   .eq('user_id', user.id);
     // MOCK: Filter flashcards
     let filtered = [...mockFlashcards];
 
@@ -117,7 +136,21 @@ export const GET: APIRoute = async ({ url }) => {
  * MOCK VERSION: Stores in memory
  * TODO: Add database integration when ready
  */
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+  const { user } = locals;
+
+  // Check authentication
+  if (!user) {
+    const errorResponse: ErrorResponseDTO = {
+      error: 'Unauthorized',
+      message: 'Musisz być zalogowany',
+    };
+    return new Response(JSON.stringify(errorResponse), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   let body: CreateFlashcardDTO;
   try {
     body = await request.json();

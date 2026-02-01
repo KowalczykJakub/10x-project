@@ -107,6 +107,7 @@ export default function FlashcardModal({
             </label>
             <Textarea
               id="flashcard-front"
+              name="front"
               placeholder="Pytanie lub pojęcie..."
               value={front}
               onChange={(e) => setFront(e.target.value)}
@@ -126,6 +127,7 @@ export default function FlashcardModal({
             </label>
             <Textarea
               id="flashcard-back"
+              name="back"
               placeholder="Odpowiedź lub wyjaśnienie..."
               value={back}
               onChange={(e) => setBack(e.target.value)}
