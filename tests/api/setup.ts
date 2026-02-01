@@ -60,7 +60,15 @@ export async function loginTestUser(email: string, password: string): Promise<st
   });
 
   if (!response.ok) {
-    throw new Error("Failed to login test user");
+    const errorText = await response.text();
+    throw new Error(
+      `Failed to login test user (${response.status}): ${errorText}\n` +
+        `Email: ${email}\n` +
+        `If status is 401, check:\n` +
+        `1. Email confirmation is DISABLED in Supabase Dashboard\n` +
+        `2. User exists in database\n` +
+        `3. Password is correct`,
+    );
   }
 
   // Extract all cookies from Set-Cookie headers

@@ -55,22 +55,29 @@ poolOptions: {
 
 ## ⚙️ Konfiguracja Supabase (Wymagane!)
 
-### MUSISZ wyłączyć email confirmation w produkcji:
+### ⚠️ KRYTYCZNE: MUSISZ wyłączyć email confirmation!
 
-1. Przejdź do: https://supabase.com/dashboard/project/weccqjwtlzelsmawkmnb/auth/settings
+**📖 Szczegółowa instrukcja**: Zobacz `.github/SUPABASE-CONFIG-REQUIRED.md`
 
-2. Znajdź sekcję **"Email Auth"**
+**Szybkie kroki**:
 
-3. **Wyłącz**:
-   - ✅ "Enable email confirmations" → **OFF** (false)
-   - ✅ "Enable double confirmation for email changes" → **OFF** (opcjonalne)
+1. Przejdź do: https://supabase.com/dashboard/project/weccqjwtlzelsmawkmnb/auth/providers
 
-4. Zapisz zmiany
+2. Kliknij na **"Email"**
+
+3. **Odznacz**: "Confirm email" → **OFF**
+
+4. Kliknij **"Save"**
 
 **Dlaczego?**
 - W testach CI nie mamy dostępu do skrzynki email
-- Bez wyłączenia confirmation, użytkownicy nie mogą się zalogować
+- Bez wyłączenia confirmation, użytkownicy nie mogą się zalogować (401)
 - Lokalnie Supabase ma to domyślnie wyłączone
+
+**Weryfikacja**: Po wyłączeniu, global setup powinien pokazać:
+```
+✅ Shared test user can login successfully
+```
 
 ---
 
