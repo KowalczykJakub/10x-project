@@ -83,15 +83,51 @@ npm run dev
 
 5. Open your browser and navigate to `http://localhost:4321` (or the port shown in the terminal)
 
+## CI/CD
+
+This project uses GitHub Actions for continuous integration and deployment. The CI pipeline automatically runs on every push to `master` and on all pull requests.
+
+### Pipeline Jobs
+
+1. **Lint** - Code quality checks with ESLint
+2. **Unit Tests** - Vitest unit tests with coverage reporting
+3. **API Tests** - Integration tests for API endpoints
+4. **E2E Tests** - End-to-end tests with Playwright
+5. **Build** - Production build verification
+
+### Required Secrets
+
+To run the CI pipeline, configure these secrets in GitHub repository settings:
+
+- `SUPABASE_URL` - Supabase project URL
+- `SUPABASE_ANON_KEY` - Supabase anonymous key
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
+- `OPENROUTER_API_KEY` - OpenRouter API key
+
+See [`.github/workflows/README.md`](.github/workflows/README.md) for detailed documentation.
+
 ## Available Scripts
 
+### Development
 - `npm run dev` - Start the Astro development server
 - `npm run build` - Build the application for production
 - `npm run preview` - Preview the production build locally
 - `npm run astro` - Run Astro CLI commands
+
+### Code Quality
 - `npm run lint` - Run ESLint to check for code issues
 - `npm run lint:fix` - Run ESLint and automatically fix issues
 - `npm run format` - Format code using Prettier
+
+### Testing
+- `npm run test` - Run tests in watch mode
+- `npm run test:unit` - Run unit tests
+- `npm run test:api` - Run API integration tests
+- `npm run test:e2e` - Run end-to-end tests with Playwright
+- `npm run test:e2e:ui` - Run E2E tests in UI mode
+- `npm run test:e2e:headed` - Run E2E tests in headed mode
+- `npm run test:coverage` - Generate test coverage report
+- `npm run test:all` - Run all tests (unit + E2E)
 
 ## Project Scope
 
